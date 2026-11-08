@@ -75,7 +75,7 @@ cmake --build build --config Release --target Cloudfin_All
 On macOS and Windows the build also copies the plug-ins into your user plug-in folders (turn that off with `-DCLOUDFIN_COPY_AFTER_BUILD=OFF`). On Linux, install the JUCE dependencies first:
 
 ```sh
-sudo apt-get install libasound2-dev libjack-jackd2-dev libfreetype-dev libfontconfig1-dev libx11-dev libxcomposite-dev libxcursor-dev libxext-dev libxinerama-dev libxrandr-dev libxrender-dev libgl1-mesa-dev
+sudo apt-get install libasound2-dev libjack-jackd2-dev libfreetype-dev libfontconfig1-dev libx11-dev libxcomposite-dev libxcursor-dev libxext-dev libxinerama-dev libxrandr-dev libxrender-dev libxi-dev libegl-dev libgl1-mesa-dev
 ```
 
 The tests (`-DCLOUDFIN_BUILD_TESTS=ON`) check the sound and drive the whole interface headlessly, saving screenshots as they go.
