@@ -84,6 +84,28 @@ sudo apt-get install libasound2-dev libjack-jackd2-dev libfreetype-dev libfontco
 
 The tests (`-DCLOUDFIN_BUILD_TESTS=ON`) check the sound and drive the whole interface headlessly, saving screenshots as they go.
 
+## Human contributions
+
+Cloudfin's code was written with Claude Code (Anthropic), working under the direction of its author, [femifleming](https://github.com/femifleming). This is what the author brought to it:
+
+- **The original effect chain.** Cloudfin began as a fork of the author's FreakiePie: a spectral gate/smear, a feedback pitch shifter locked to raga and microtonal scales (including La Monte Young's *The Well-Tuned Piano*), a live-buffer granular shifter with randomly slewed size, position and octave, a 500 Hz high-passed FDN reverb and a main feedback loop. It is meant to be live-safe, with no clicks and no latency.
+- **The aesthetic and where it comes from.** Frutiger Aero, from a recurring dream of a continuous waterslide, with light blue light shining through the mostly opaque white plastic tube. The knobs are wet and fill with water like bubbles, and float around.
+- **The name and the split.** Cloudfin was named by the author and kept as a separate plug-in from FreakiePie.
+- **New stages and controls.**
+  - A formant filter.
+  - A hard-panned stereo 3-tap delay with just-intonation times that follow the pitch shifter's scale.
+  - A compander before the feedback stage.
+  - Random-slew attenuverters on every parameter.
+  - A drawable grain shape, and grain random pan and reverse.
+  - A reverb tone control and spectral freeze.
+  - Pitch-shifter grain changes that crossfade rather than glide.
+- **Reorderable chain, shuffle and randomize.** The effects can be put in any order, with shuffle and randomize buttons.
+- **Day, dusk and night.** A darker "water aero sunset" night mode with patches of warm sunlight, a third mode, more depth, and bokeh.
+- **Gravity and water.** Controls fall and roll, and shuffle when the window moves. Water gathers at the bottom, and a randomly filtered "sloshy" noise layer runs while gravity is on.
+- **The hydrophone recording.** The built-in texture is the author's own stereo hydrophone recording, which can go into the input or onto the output.
+- **Presets and sound checks.** The author asked for a set of presets and a UI of at least 30 fps. From listening, they asked that main feedback self-resonate and that the output never clip.
+- **The release and the icon.** Builds for macOS, Windows and Linux, a README, help, a Homebrew install, and the plain sky-blue gradient icon (after dropping the fin from it).
+
 ## Credits and notes
 
 - The hydrophone recording is original to this project.
