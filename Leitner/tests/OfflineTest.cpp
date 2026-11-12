@@ -235,6 +235,37 @@ int main (int argc, char** argv)
         }
         check (ok && slowest > 3.0 && peak < 2.0f, String::formatted ("all %d figures at 7th order with the room: finite, peak %.2f, slowest %.1fx realtime", (int) leitner::numFigures, peak, slowest));
     }
+    {   // the programs: every one of Leitner's sounds and stays finite; a sound program leaves the space alone; your own presets
+        bool ok = true; String quiet;
+        LeitnerProcessor names;
+        for (int k = 0; k < LeitnerProcessor::numSpacePrograms(); ++k)
+        {
+            LeitnerProcessor p; p.setCurrentProgram (k);
+            const auto a = run (p, 3.0, true, true, 16);
+            bool finite = true; float peak = 0.0f;
+            for (int c = 0; c < 16; ++c) { peak = std::max (peak, a.getMagnitude (c, 0, a.getNumSamples())); for (int i = 0; i < a.getNumSamples(); i += 53) if (! std::isfinite (a.getSample (c, i))) finite = false; }
+            if (! finite || peak < 0.02f || peak > 1.5f) { ok = false; quiet << p.getProgramName (k) << String::formatted (" (peak %.3f) ", peak); }
+        }
+        check (ok, String::formatted ("all %d of Leitner's programs sound and stay finite ", LeitnerProcessor::numSpacePrograms()) + quiet);
+        LeitnerProcessor p;
+        p.setCurrentProgram (2);                                             // Ton-Tor
+        check (p.figure->getIndex() == leitner::fgGate && p.getProgramName (p.getCurrentProgram()) == "Ton-Tor", "a program sets its figure");
+        setP (p.order, 2.0f);
+        p.setCurrentProgram (LeitnerProcessor::numSpacePrograms() + 5);      // one of Cloudfin's
+        check (p.figure->getIndex() == leitner::fgGate && p.order->getIndex() == 2, "a sound-only program leaves the space and the order alone");
+        p.setCurrentProgram (11);
+        check (p.order->getIndex() == 2 && p.figure->getIndex() == leitner::fgPolytope, "one of Leitner's keeps the order you set");
+
+        const auto dir = File::getSpecialLocation (File::tempDirectory).getChildFile ("leitner-preset-test");
+        dir.deleteRecursively();
+        setP (p.turn, 77.0f); setP (p.apvts.getParameter (ids::dlMix), 0.66f);
+        check (p.saveUserPreset (dir.getChildFile ("mine")) && dir.getChildFile ("mine.leitner").existsAsFile(), "a preset saves to a file");
+        LeitnerProcessor q;
+        check (q.loadUserPreset (dir.getChildFile ("mine.leitner")) && std::abs (q.turn->get() - 77.0f) < 0.5f && q.figure->getIndex() == leitner::fgPolytope
+               && std::abs (q.apvts.getRawParameterValue (ids::dlMix)->load() - 0.66f) < 0.01f, "and loads back, the space and the sound");
+        dir.deleteRecursively();
+        check (names.userPresetFolder().getFullPathName().contains ("Leitner"), "your presets live in " + names.userPresetFolder().getFullPathName());
+    }
     {   // the state, and a stereo track
         LeitnerProcessor p;
         setP (p.figure, (float) leitner::fgGate); setP (p.order, 2.0f); setP (p.points, 12.0f); setP (p.lift, 0.7f); setP (p.apvts.getParameter (ids::rvMix), 0.61f);

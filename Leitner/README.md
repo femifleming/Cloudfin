@@ -41,6 +41,10 @@ The left channel is line 1 (black in the drawing) and the right channel is line 
 
 A line can pass through the middle of the room: near the centre the higher orders fade, so the sound spreads round you and then leaves on the other side.
 
+## Programs and your own presets
+
+The **program** button lists Leitner's eighteen programs (each a space with one of Cloudfin's sounds under it; they leave the Ambisonic order alone), then Cloudfin's programs, which change only the sound and leave the space as you have it, then your own. **save this as a preset...** writes everything to a `.leitner` file in your presets folder (`~/Library/Application Support/FreakiePie/Leitner/Presets` on macOS, `%APPDATA%\FreakiePie\Leitner\Presets` on Windows, `~/.config/FreakiePie/Leitner/Presets` on Linux), and **show the presets folder** opens it.
+
 ## The figures, and where they come from
 
 | Figure | What it does | After |
@@ -65,6 +69,10 @@ A line can pass through the middle of the room: near the centre the higher order
 It is mirror symmetrical: the room in the middle with the space's controls under it in two facing columns, and a sheet of Cloudfin's sound program either side, the right one reversed. It is drawn after Leitner's 1969 Soundcube sheets: typed sheets, the room in perspective with loudspeakers as small circles on every wall, the sound as a heavy black line with arrows, a solid black figure standing in it. The red of line 2 is after the red rods of his Plexiglas models.
 
 **Drag the room to turn it** and see where things are from any side; double-click it to face front again. Every parameter is a ruled line with a tick: click or drag along it, double-click to put it back. Alt-drag a Cloudfin parameter to set its drift (the red stroke), and a red circle shows where the drift has it now.
+
+## Windows and Linux
+
+Leitner builds as a VST3 and a standalone app on Windows, and as a VST3, an LV2 and a standalone app on Linux; the repository's build workflow makes all three systems' packages. The window is set in American Typewriter on macOS, Courier New on Windows and the system's monospaced face on Linux.
 
 ## Build
 

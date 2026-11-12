@@ -20,6 +20,16 @@ public:
     void getStateInformation (juce::MemoryBlock&) override;
     void setStateInformation (const void*, int) override;
 
+    // Leitner's programs: its own (a space, with one of Cloudfin's sound programs under it), then
+    // Cloudfin's sound programs alone, which leave the space as it is.
+    int getNumPrograms() override;
+    int getCurrentProgram() override { return program.load(); }
+    void setCurrentProgram (int) override;
+    const juce::String getProgramName (int) override;
+    juce::String getProgramGroup (int);
+    static int numSpacePrograms();
+    juce::String presetExtension() const override { return ".leitner"; }
+
     // the space's own parameters (added beside Cloudfin's)
     juce::AudioParameterChoice* order = nullptr;
     juce::AudioParameterChoice* figure = nullptr;
@@ -35,6 +45,7 @@ public:
     leitner::Space space;
     std::atomic<int> orderNow { 3 }, channelsNow { 16 };   // what's actually coming out (a track with too few channels gets a lower order)
     std::atomic<float> outLevel { 0.0f };
+    std::atomic<int> program { 0 };
     std::atomic<float> viewYaw { 0.0f }, viewPitch { 0.0f };   // how the drawing of the room is turned (kept while the window is closed)
 
 private:

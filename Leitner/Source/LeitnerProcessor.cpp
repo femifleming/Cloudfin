@@ -92,6 +92,87 @@ LeitnerProcessor::LeitnerProcessor() : CloudfinProcessor (buses())
     }
 }
 
+//==============================================================================
+namespace
+{
+struct SpaceValue { const char* id; float v; };
+struct SpaceProgram { const char* name; const char* group; const char* sound; std::vector<SpaceValue> space; };
+
+// figures by number, as in leitner::Figure
+enum { Line = 0, Swing, Liege, Gate, Vertical, Circle, Soundcube, Spiral, Cube, Expand, Vault, Paraboloid, Terretektorh, Polytope };
+
+const std::vector<SpaceProgram>& spacePrograms()
+{
+    static const std::vector<SpaceProgram> list {
+        // after Leitner
+        { "Ton-Linie",           "Leitner", "Cloudfin",        {} },
+        { "Through the Body",    "Leitner", "Clear Water",     { { "spFigure", Line }, { "spHeight", 0.0f }, { "spApart", 0.0f }, { "spSwell", 0.8f }, { "spSeconds", 3.0f }, { "spPoints", 12 }, { "spLegato", 0.7f } } },
+        { "Ton-Tor",             "Leitner", "Vowel Drift",     { { "spFigure", Gate }, { "spCounter", 1.0f }, { "spLift", 0.7f }, { "spSeconds", 5.0f }, { "spPoints", 19 }, { "spLegato", 0.3f }, { "spApart", 20.0f } } },
+        { "Schwingen",           "Leitner", "Slow Tide",       { { "spFigure", Swing }, { "spPoints", 33 }, { "spSeconds", 5.0f }, { "spRoom", 0.3f }, { "spApart", 15.0f } } },
+        { "Ton-Liege",           "Leitner", "Deep Hydrophone", { { "spFigure", Liege }, { "spPoints", 4 }, { "spLegato", 1.0f }, { "spSeconds", 9.0f }, { "spApart", 10.0f }, { "spSwell", 0.4f } } },
+        { "Soundcube 1969",      "Leitner", "Glass Stretch",   { { "spFigure", Soundcube }, { "spPoints", 32 }, { "spLegato", 0.2f }, { "spSeconds", 14.0f }, { "spRoom", 0.1f } } },
+        { "Vertical Space",      "Leitner", "Yaman Shimmer",   { { "spFigure", Vertical }, { "spCounter", 1.0f }, { "spLift", 0.6f }, { "spPoints", 6 }, { "spLegato", 0.1f }, { "spSeconds", 2.5f }, { "spApart", 45.0f } } },
+        { "Widening, Narrowing", "Leitner", "Bloom Loop",      { { "spFigure", Expand }, { "spApart", 90.0f }, { "spPoints", 33 }, { "spSeconds", 7.0f }, { "spSwell", 0.3f }, { "spLevel", 0.8f } } },
+        { "Vault",               "Leitner", "Underwater Room", { { "spFigure", Vault }, { "spPoints", 33 }, { "spSeconds", 20.0f }, { "spRoom", 0.4f }, { "spRoomDecay", 8.0f } } },
+        // after Xenakis
+        { "Ruled Surface",       "Xenakis", "Harmonic Fountain", { { "spFigure", Paraboloid }, { "spPoints", 33 }, { "spCounter", 1.0f }, { "spSeconds", 8.0f }, { "spSize", 1.0f } } },
+        { "Terretektorh",        "Xenakis", "Spectral Snow",   { { "spFigure", Terretektorh }, { "spPoints", 24 }, { "spLegato", 0.6f }, { "spSeconds", 6.0f }, { "spCounter", 0.5f } } },
+        { "Polytope",            "Xenakis", "Pelog Echoes",    { { "spFigure", Polytope }, { "spChance", 1.0f }, { "spScatter", 0.4f }, { "spRest", 0.2f }, { "spPoints", 8 }, { "spLegato", 1.0f }, { "spSeconds", 4.0f } } },
+        { "Sieve Ring",          "Xenakis", "Maqam Mist",      { { "spFigure", Circle }, { "spPoints", 16 }, { "spLegato", 0.0f }, { "spSieve", 2 }, { "spChance", 0.6f }, { "spSeconds", 3.0f } } },
+        { "Brownian Line",       "Xenakis", "Tritave Choir",   { { "spFigure", Line }, { "spWalk", 0.7f }, { "spSeconds", 6.0f }, { "spPoints", 33 }, { "spSwell", 0.5f } } },
+        // pulses, after Fell, Lazar and Kindohm
+        { "Walking Accent",      "pulses",  "Clear Water",     { { "spFigure", Circle }, { "spPoints", 8 }, { "spPulse", 1.0f }, { "spPulseRate", 9.0f }, { "spCell", 3 }, { "spRotate", 1 }, { "spPulseWidth", 0.3f }, { "spSeconds", 4.0f }, { "spRoom", 0.05f } } },
+        { "Rhythm Into Pitch",   "pulses",  "Cloudfin",        { { "spFigure", Line }, { "spPoints", 33 }, { "spPulse", 1.0f }, { "spPulseRate", 30.0f }, { "spPulseBend", 1.0f }, { "spPulseWidth", 0.2f }, { "spSeconds", 6.0f }, { "spApart", 40.0f } } },
+        { "Five in Eight",       "pulses",  "Pelog Echoes",    { { "spFigure", Cube }, { "spPoints", 8 }, { "spLegato", 0.0f }, { "spPulse", 1.0f }, { "spPulseRate", 7.0f }, { "spHits", 5 }, { "spSteps", 8 }, { "spCell", 6 }, { "spJux", 3 }, { "spSeconds", 5.0f } } },
+        { "Broken Pattern",      "pulses",  "Spectral Snow",   { { "spFigure", Polytope }, { "spPulse", 1.0f }, { "spPulseRate", 11.0f }, { "spHits", 5 }, { "spSteps", 8 }, { "spDrop", 0.3f }, { "spJux", 1 }, { "spChance", 0.8f }, { "spPoints", 8 }, { "spSeconds", 3.0f } } },
+    };
+    return list;
+}
+}
+
+int LeitnerProcessor::numSpacePrograms() { return (int) spacePrograms().size(); }
+int LeitnerProcessor::getNumPrograms() { return numSpacePrograms() + CloudfinProcessor::getNumPrograms(); }
+
+const String LeitnerProcessor::getProgramName (int i)
+{
+    const int n = numSpacePrograms();
+    if (isPositiveAndBelow (i, n)) return spacePrograms()[(size_t) i].name;
+    return CloudfinProcessor::getProgramName (i - n);
+}
+
+String LeitnerProcessor::getProgramGroup (int i)
+{
+    const int n = numSpacePrograms();
+    if (isPositiveAndBelow (i, n)) return spacePrograms()[(size_t) i].group;
+    return "sound only: " + CloudfinProcessor::getProgramGroup (i - n);
+}
+
+void LeitnerProcessor::setCurrentProgram (int index)
+{
+    const int n = numSpacePrograms();
+    if (! isPositiveAndBelow (index, getNumPrograms())) return;
+    if (index >= n)
+    {
+        // one of Cloudfin's: the sound changes, the space stays as you have it
+        std::vector<float> keep;
+        for (auto* prm : spaceParams) keep.push_back (prm->getValue());
+        CloudfinProcessor::setCurrentProgram (index - n);
+        for (size_t i = 0; i < spaceParams.size(); ++i) spaceParams[i]->setValueNotifyingHost (keep[i]);
+        program.store (index);
+        return;
+    }
+    const auto& pr = spacePrograms()[(size_t) index];
+    const float keepOrder = static_cast<RangedAudioParameter*> (order)->getValue();   // (the order belongs to the track, not the program)
+    int sound = 0;
+    for (int i = 0; i < CloudfinProcessor::getNumPrograms(); ++i) if (CloudfinProcessor::getProgramName (i) == pr.sound) sound = i;
+    CloudfinProcessor::setCurrentProgram (sound);     // (this also puts every space parameter back to its default)
+    for (auto& v : pr.space)
+        for (auto* prm : spaceParams)
+            if (prm->getParameterID() == v.id) prm->setValueNotifyingHost (prm->convertTo0to1 (v.v));
+    order->setValueNotifyingHost (keepOrder);
+    program.store (index);
+}
+
 bool LeitnerProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     const auto out = layouts.getMainOutputChannelSet();
@@ -187,6 +268,7 @@ AudioProcessorEditor* LeitnerProcessor::createEditor() { return new LeitnerEdito
 void LeitnerProcessor::getStateInformation (MemoryBlock& dest)
 {
     for (auto* prm : spaceParams) apvts.state.setProperty (prm->getParameterID(), prm->getValue(), nullptr);
+    apvts.state.setProperty ("ltProgram", program.load(), nullptr);
     CloudfinProcessor::getStateInformation (dest);
 }
 
@@ -196,6 +278,7 @@ void LeitnerProcessor::setStateInformation (const void* data, int size)
     for (auto* prm : spaceParams)
         if (apvts.state.hasProperty (prm->getParameterID()))
             prm->setValueNotifyingHost ((float) apvts.state.getProperty (prm->getParameterID()));
+    program.store (jlimit (0, getNumPrograms() - 1, (int) apvts.state.getProperty ("ltProgram", 0)));
 }
 
 AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new LeitnerProcessor(); }

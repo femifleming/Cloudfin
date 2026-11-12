@@ -31,7 +31,7 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 <p>An Ambisonics encoder, 3rd to 7th order, after Bernhard Leitner and Iannis Xenakis, with pulses after Mark Fell, G&aacute;bor L&aacute;z&aacute;r and Kindohm</p>
 <img src="../front.jpg">
 <p>M A N U A L <span class="x">xxxxx</span> H A N D B U C H</p>
-<p class="de">version 0.1</p>
+<p class="de">version 0.2</p>
 </div>
 
 <section>
@@ -45,18 +45,19 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 <tr><td>6. The figures</td><td>8</td></tr>
 <tr><td>7. Chance: what comes from Xenakis</td><td>9</td></tr>
 <tr><td>8. Pulses: Fell, L&aacute;z&aacute;r, Kindohm</td><td>10</td></tr>
-<tr><td>9. The sound program: Cloudfin's effects</td><td>12</td></tr>
-<tr><td>10. Starting points</td><td>14</td></tr>
-<tr><td>11. If something seems wrong</td><td>14</td></tr>
-<tr><td>12. Every parameter</td><td>15</td></tr>
-<tr><td>13. Sources and credits</td><td>17</td></tr>
+<tr><td>9. Programs, and your own presets</td><td>12</td></tr>
+<tr><td>10. The sound program: Cloudfin's effects</td><td>14</td></tr>
+<tr><td>11. Starting points</td><td>16</td></tr>
+<tr><td>12. If something seems wrong</td><td>16</td></tr>
+<tr><td>13. Every parameter</td><td>17</td></tr>
+<tr><td>14. Sources and credits</td><td>19</td></tr>
 </table>
 <h2 style="margin-top:14mm">1. What Leitner is</h2>
 <p>Leitner is the Ambisonics version of Cloudfin. It has Cloudfin's seven effects, its feedback loop, its drift and its presets (the <b>sound program</b>). After them comes one more stage, the <b>space program</b>: the stereo that Cloudfin makes is sent through a room as two lines of sound, and encoded to Ambisonics.</p>
 <p>It is an <b>encoder</b>. Stereo goes in; Ambisonics come out, in ACN channel order with SN3D normalisation (the AmbiX format that the IEM and SPARTA plug-ins use). It decodes nothing itself: you route it to a decoder for your loudspeakers or headphones.</p>
 <p>Channels out: <b>16</b> at 3rd order (the default), <b>25</b> at 4th, <b>36</b> at 5th, <b>49</b> at 6th and <b>64</b> at 7th.</p>
 <h2 style="margin-top:10mm">2. Installing it, and routing it to a decoder</h2>
-<p>The build puts <b>Leitner.vst3</b> in <i>~/Library/Audio/Plug-Ins/VST3</i> and <b>Leitner.component</b> (Audio Unit) in <i>~/Library/Audio/Plug-Ins/Components</i>. Rescan plug-ins in your DAW; it appears under <b>FreakiePie</b>.</p>
+<p><b>macOS:</b> copy <b>Leitner.vst3</b> to <i>~/Library/Audio/Plug-Ins/VST3</i> and <b>Leitner.component</b> (Audio Unit) to <i>~/Library/Audio/Plug-Ins/Components</i>. <b>Windows:</b> copy <b>Leitner.vst3</b> to <i>C:\Program Files\Common Files\VST3</i>. <b>Linux:</b> copy <b>Leitner.vst3</b> to <i>~/.vst3</i> and <b>Leitner.lv2</b> to <i>~/.lv2</i>. Then rescan plug-ins in your DAW; it appears under <b>FreakiePie</b>. (Building it yourself on macOS or Windows puts the plug-ins in place for you.)</p>
 <ol>
 <li>Put Leitner on a track and give the track as many channels as the order needs. In REAPER: the track's <b>Route</b> button, <i>Track channels</i>: 16 for 3rd order, 36 for 5th, 64 for 7th.</li>
 <li>Set the same order in Leitner: <b>order</b>, at the bottom of the right-hand column under the room.</li>
@@ -81,7 +82,7 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 <tr><td>a square</td><td>is a switch: click it.</td></tr>
 </table>
 <h3>Along the bottom of the middle sheet</h3>
-<p><b>hold the lines still</b> stops both lines where they are. Under it is the order the sound program runs in: click a word to move that effect one place earlier. <b>program</b> opens the presets (they are Cloudfin's) and <b>a random patch</b> sets every control of the sound program somewhere new.</p>
+<p><b>hold the lines still</b> stops both lines where they are. Under it is the order the sound program runs in: click a word to move that effect one place earlier. <b>program</b> opens the programs and your own presets (chapter 9) and <b>a random patch</b> sets every control of the sound program somewhere new.</p>
 </section>
 
 <section>
@@ -209,7 +210,44 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 </section>
 
 <section>
-<h2>9. The sound program: Cloudfin's effects <span class="x">xx</span> <span class="de">Ton-Programm</span></h2>
+<h2>9. Programs, and your own presets <span class="x">xx</span> <span class="de">Programme</span></h2>
+<p>The <b>program</b> button at the bottom of the middle sheet opens the list. It has four parts.</p>
+<h3>Leitner's programs</h3>
+<p>Eighteen programs, each a space with one of Cloudfin's sounds under it. Choosing one sets everything except the Ambisonic order, which belongs to your track and stays as you have it.</p>
+<table><tr><th>Program</th><th>The space</th><th>The sound under it</th></tr>
+<tr><td>Ton-Linie</td><td>a line across the room in eight steps</td><td>Cloudfin</td></tr>
+<tr><td>Through the Body</td><td>one line through your head, swelling as it nears</td><td>Clear Water</td></tr>
+<tr><td>Ton-Tor</td><td>the gate, one line rising as one falls, thinning at the top</td><td>Vowel Drift</td></tr>
+<tr><td>Schwingen</td><td>a smooth pendulum across you</td><td>Slow Tide</td></tr>
+<tr><td>Ton-Liege</td><td>four points along the body, slow and melting</td><td>Deep Hydrophone</td></tr>
+<tr><td>Soundcube 1969</td><td>four circles at four heights, 32 points</td><td>Glass Stretch</td></tr>
+<tr><td>Vertical Space</td><td>floor to ceiling in hard steps, the lines opposed</td><td>Yaman Shimmer</td></tr>
+<tr><td>Widening, Narrowing</td><td>out from the centre to left and right, and back</td><td>Bloom Loop</td></tr>
+<tr><td>Vault</td><td>a slow vault overhead in a long room</td><td>Underwater Room</td></tr>
+<tr><td>Ruled Surface</td><td>the paraboloid, two families of straight lines</td><td>Harmonic Fountain</td></tr>
+<tr><td>Terretektorh</td><td>the accelerating spiral, the lines a quarter apart</td><td>Spectral Snow</td></tr>
+<tr><td>Polytope</td><td>points by chance, scattered, with rests</td><td>Pelog Echoes</td></tr>
+<tr><td>Sieve Ring</td><td>a ring through the sieve 3/0 + 4/1, by chance</td><td>Maqam Mist</td></tr>
+<tr><td>Brownian Line</td><td>one line on a random walk</td><td>Tritave Choir</td></tr>
+<tr><td>Walking Accent</td><td>a ring of pulses, the cell 3 1 2 rotating</td><td>Clear Water</td></tr>
+<tr><td>Rhythm Into Pitch</td><td>pulses bending up four octaves along a line</td><td>Cloudfin</td></tr>
+<tr><td>Five in Eight</td><td>the cube's corners, 5 hits in 8, line 2 twice as fast</td><td>Pelog Echoes</td></tr>
+<tr><td>Broken Pattern</td><td>a polytope of pulses with drops, line 2 backwards</td><td>Spectral Snow</td></tr>
+</table>
+<h3>Sound only</h3>
+<p>Under those are Cloudfin's own programs. They change the sound program and leave the space exactly as you have it, so you can try one space with many sounds.</p>
+<h3>Yours</h3>
+<p><b>save this as a preset...</b> keeps everything as it is now (the space, the sound program, the order of the effects, the drifts) in a file with the name you give it. Your presets then appear in the list under <i>yours</i>. <b>show the presets folder</b> opens the folder: they are ordinary files ending in <i>.leitner</i>, so you can copy them to another computer, rename them or delete them there.</p>
+<table>
+<tr><td>macOS</td><td>~/Library/Application Support/FreakiePie/Leitner/Presets</td></tr>
+<tr><td>Windows</td><td>%APPDATA%\FreakiePie\Leitner\Presets</td></tr>
+<tr><td>Linux</td><td>~/.config/FreakiePie/Leitner/Presets</td></tr>
+</table>
+<p>A preset remembers the Ambisonic order it was saved with. Everything is also saved with your DAW session as usual, whether or not you make a preset of it.</p>
+</section>
+
+<section>
+<h2>10. The sound program: Cloudfin's effects <span class="x">xx</span> <span class="de">Ton-Programm</span></h2>
 <p>Leitner kept two layers apart: the space program (where the sound goes) and the sound program (what the sound is). The side sheets are the sound program, and it is Cloudfin: seven effects one after another, in any order, with a feedback loop round them. Each has a <b>mix</b>; an effect with its mix at 0 is out of the way. The number beside each heading is its place in the order.</p>
 <h3>Spectral smear</h3>
 <p>The sound is split into hundreds of frequency bins. Below the <b>cutoff</b> each bin fades, and whatever gets through rings on for the <b>smear</b> time. <b>Attack</b> is how quickly an opening bin swells, <b>knee</b> how gently the bins under the cutoff fade. <b>Blur</b> smooths the spectrum across neighbouring bins, <b>scatter</b> throws the phases about until tones turn to breath, and <b>tilt</b> leans it darker or brighter. <b>Spectral freeze</b> holds the spectrum as it is.</p>
@@ -230,7 +268,7 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 </section>
 
 <section>
-<h2>10. Starting points <span class="x">xx</span> <span class="de">Anfänge</span></h2>
+<h2>11. Starting points <span class="x">xx</span> <span class="de">Anfänge</span></h2>
 <table>
 <tr><th>For</th><th>Set</th></tr>
 <tr><td>hearing the lines plainly</td><td>all seven mixes to 0, room 0, Ton-Linie, 8 points, legato 0. Play something steady: you will hear it switched from loudspeaker to loudspeaker.</td></tr>
@@ -239,7 +277,7 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 <tr><td>rising and falling</td><td>Ton-Tor or Vertikal, counter 100 %, lift 70 %.</td></tr>
 <tr><td>an unpredictable field</td><td>Polytope, chance 100 %, scatter 40 %, grains mix 60 %, rest 20 %.</td></tr>
 </table>
-<h2 style="margin-top:12mm">11. If something seems wrong <span class="x">xx</span> <span class="de">Hilfe</span></h2>
+<h2 style="margin-top:12mm">12. If something seems wrong <span class="x">xx</span> <span class="de">Hilfe</span></h2>
 <table>
 <tr><td>I only hear plain stereo</td><td>The track has two channels. Give it 16 or more and put a decoder after Leitner. The line under the title says what is coming out.</td></tr>
 <tr><td>It sounds phasey or hollow</td><td>The decoder is not set to the same order, or expects a different normalisation. Use SN3D (AmbiX) and match the order.</td></tr>
@@ -248,12 +286,14 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 <tr><td>Clicks as the line moves</td><td><i>legato</i> at 0 switches hard on purpose. Turn it up.</td></tr>
 <tr><td>Scatter does nothing</td><td><i>points</i> is at continuous. Scatter moves the raster's loudspeakers, so it needs a raster.</td></tr>
 <tr><td>The room drawing is at an odd angle</td><td>Double-click it.</td></tr>
+<tr><td>The level dips on loud passages</td><td>Leitner has a ceiling on its output: if the scene would pass full scale, every channel is turned down together for a moment. Lower <i>level</i>, or the feedback in the sound program.</td></tr>
+<tr><td>The type looks different on Windows or Linux</td><td>The window is set in American Typewriter on macOS. Elsewhere it uses Courier New (Windows) or the system's monospaced face (Linux); everything else is the same.</td></tr>
 <tr><td>High CPU</td><td>7th order with the room on is the heaviest setting. Lower the order, or turn <i>room</i> to 0.</td></tr>
 </table>
 </section>
 
 <section>
-<h2>12. Every parameter <span class="x">xx</span> <span class="de">Alle Parameter</span></h2>
+<h2>13. Every parameter <span class="x">xx</span> <span class="de">Alle Parameter</span></h2>
 <h3>The space</h3>
 <table><tr><th>Name</th><th>Range</th><th>Default</th></tr>
 <tr><td>order</td><td>3rd, 4th, 5th, 6th, 7th</td><td>3rd</td></tr>
@@ -289,7 +329,7 @@ ol,ul{margin:0 0 8pt;padding-left:16pt} li{margin-bottom:3pt}
 </section>
 
 <section>
-<h2>13. Sources and credits <span class="x">xx</span> <span class="de">Quellen</span></h2>
+<h2>14. Sources and credits <span class="x">xx</span> <span class="de">Quellen</span></h2>
 <p>Leitner is an homage. It is not affiliated with or endorsed by Bernhard Leitner, the estate of Iannis Xenakis, Mark Fell, G&aacute;bor L&aacute;z&aacute;r or Kindohm, and it contains no drawing, recording, score or text of theirs.</p>
 <h3>Bernhard Leitner</h3>
 <ul>

@@ -142,6 +142,10 @@ private:
     juce::TextButton presetBtn, randomBtn, shapeBtn;
     uint32_t seenOrder = 0;
     int seenFigure = -1, seenOut = -1;
+    int seenProgram = -1;
+    juce::String userShown;                      // your preset's name, while it is the one loaded
+    std::unique_ptr<juce::FileChooser> chooser;
+    void programMenu();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LeitnerEditor)
 };

@@ -16,6 +16,8 @@ Seven effects run one after another, in any order you like: drag the chips under
 
 **[How to use it: the full help page](docs/HELP.md)**
 
+**[The manual (PDF)](docs/manual/Cloudfin%20Manual.pdf)**: the same guide, also in every download. Your own presets can be saved from the preset menu.
+
 ## Download
 
 Get the latest version from the [Releases page](https://github.com/femifleming/Cloudfin/releases/latest):

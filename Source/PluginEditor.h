@@ -281,6 +281,10 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> gravityAtt;
     juce::ComboBox presetBox;
     int shownPreset = -1;
+    juce::Array<juce::File> userPresetFiles;
+    std::unique_ptr<juce::FileChooser> chooser;
+    void fillPresets();
+    void presetChosen();
     HydroControl hydroCtl { proc };
 
     // the water along the bottom: a strip when things are calm, a pool when gravity's on

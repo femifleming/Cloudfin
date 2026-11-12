@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Universal binary")
 set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS")
 
-project(Leitner VERSION 0.1.0 LANGUAGES C CXX)
+project(Leitner VERSION 0.2.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -27,7 +27,7 @@ else()
 endif()
 
 juce_add_plugin(Leitner
-    VERSION 0.1.0
+    VERSION 0.2.0
     COMPANY_NAME "FreakiePie"
     COMPANY_WEBSITE "https://github.com/femifleming/Cloudfin/tree/main/Leitner"
     BUNDLE_ID "com.freakiepie.leitner"

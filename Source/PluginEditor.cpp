@@ -153,14 +153,27 @@ void AeroLookAndFeel::setTheme (const Theme& t)
 
 Font AeroLookAndFeel::uiFont (float h, bool bold)
 {
+    // Avenir Next on macOS; where there is none, the system's own sans, as heavy as it comes
     const auto& t = look::tune();
+   #if JUCE_MAC
     if (t.heavy) return Font (FontOptions ("Avenir Next", bold ? "Heavy" : "Demi Bold", h * t.type));
     return Font (FontOptions ("Avenir Next", h * t.type, bold ? Font::bold : Font::plain));
+   #elif JUCE_WINDOWS
+    return Font (FontOptions ("Segoe UI", bold ? "Bold" : "Semibold", h * t.type));
+   #else
+    return Font (FontOptions (Font::getDefaultSansSerifFontName(), h * t.type * 0.95f, Font::bold));
+   #endif
 }
 
 Font AeroLookAndFeel::titleFont (float h)
 {
+   #if JUCE_MAC
     return Font (FontOptions ("Arial Rounded MT Bold", h, Font::plain));
+   #elif JUCE_WINDOWS
+    return Font (FontOptions ("Arial Rounded MT Bold", h, Font::plain));   // (comes with Office; Windows falls back to its own sans without it)
+   #else
+    return Font (FontOptions (Font::getDefaultSansSerifFontName(), h, Font::bold));
+   #endif
 }
 
 Font AeroLookAndFeel::getComboBoxFont (ComboBox&) { return uiFont (13.0f, true); }
@@ -1163,19 +1176,12 @@ CloudfinEditor::CloudfinEditor (CloudfinProcessor& p)
     themeSwitch.onChange = [this] (int m) { setThemeMode (m); };
     gravityAtt = std::make_unique<AudioProcessorValueTreeState::ButtonAttachment> (p.apvts, ids::gravity, gravityBtn);
 
-    // presets, in their groups
-    {
-        String group;
-        for (int i = 0; i < p.getNumPrograms(); ++i)
-        {
-            if (p.getProgramGroup (i) != group) { group = p.getProgramGroup (i); if (i > 0) presetBox.addSectionHeading (group); }
-            presetBox.addItem (p.getProgramName (i), i + 1);
-        }
-        presetBox.setTextWhenNothingSelected ("presets");
-        presetBox.setJustificationType (Justification::centredLeft);
-        presetBox.onChange = [this] { if (presetBox.getSelectedId() > 0) proc.setCurrentProgram (presetBox.getSelectedId() - 1); };
-        content.addAndMakeVisible (presetBox);
-    }
+    // presets, in their groups, then your own, then saving
+    presetBox.setTextWhenNothingSelected ("presets");
+    presetBox.setJustificationType (Justification::centredLeft);
+    presetBox.onChange = [this] { presetChosen(); };
+    content.addAndMakeVisible (presetBox);
+    fillPresets();
     content.addAndMakeVisible (hydroCtl);
     waveH.assign (120, 0.0f);
     waveV.assign (120, 0.0f);
@@ -1208,6 +1214,55 @@ CloudfinEditor::CloudfinEditor (CloudfinProcessor& p)
     lastTick = Time::getMillisecondCounterHiRes() * 0.001;
     timerCallback();
     startTimerHz (30);
+}
+
+void CloudfinEditor::fillPresets()
+{
+    presetBox.clear (dontSendNotification);
+    String group;
+    for (int i = 0; i < proc.getNumPrograms(); ++i)
+    {
+        if (proc.getProgramGroup (i) != group) { group = proc.getProgramGroup (i); if (i > 0) presetBox.addSectionHeading (group); }
+        presetBox.addItem (proc.getProgramName (i), i + 1);
+    }
+    userPresetFiles = proc.userPresets();
+    if (! userPresetFiles.isEmpty()) presetBox.addSectionHeading ("yours");
+    for (int i = 0; i < userPresetFiles.size(); ++i) presetBox.addItem (userPresetFiles[i].getFileNameWithoutExtension(), 1001 + i);
+    presetBox.addSeparator();
+    presetBox.addItem ("save this as a preset...", 2000);
+    presetBox.addItem ("show the presets folder", 2001);
+    shownPreset = -1;
+}
+
+void CloudfinEditor::presetChosen()
+{
+    const int id = presetBox.getSelectedId();
+    if (id >= 1 && id <= 1000) proc.setCurrentProgram (id - 1);
+    else if (id > 1000 && id < 2000)
+    {
+        const auto f = userPresetFiles[id - 1001];
+        if (proc.loadUserPreset (f))
+        {
+            const int mode = jlimit (0, 2, proc.themeMode.load());
+            themeSwitch.setMode (mode, true); setThemeMode (mode);
+            shownPreset = proc.getCurrentProgram();          // (so the menu keeps your preset's name until a program is picked)
+            presetBox.setText (f.getFileNameWithoutExtension(), dontSendNotification);
+        }
+    }
+    else if (id == 2000)
+    {
+        proc.userPresetFolder().createDirectory();
+        chooser = std::make_unique<FileChooser> ("Save this as a preset", proc.userPresetFolder().getChildFile ("my preset" + proc.presetExtension()), "*" + proc.presetExtension());
+        chooser->launchAsync (FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
+                              [this] (const FileChooser& fc)
+                              {
+                                  const auto f = fc.getResult();
+                                  const bool saved = f != File() && proc.saveUserPreset (f);
+                                  fillPresets();
+                                  if (saved) { shownPreset = proc.getCurrentProgram(); presetBox.setText (f.getFileNameWithoutExtension(), dontSendNotification); }
+                              });
+    }
+    else if (id == 2001) { proc.userPresetFolder().createDirectory(); proc.userPresetFolder().revealToUser(); shownPreset = -1; }
 }
 
 CloudfinEditor::~CloudfinEditor()

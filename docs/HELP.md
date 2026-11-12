@@ -76,7 +76,7 @@ Each knob has its own slow random voltage. The small bubble in the bottom corner
 
 ## Presets, random and the scale
 
-The menu at the top left holds the presets. *Randomize* makes a new patch with every control somewhere new. The pitch panel's menu picks the scale that the pitch shifter and the JI delay follow, from Western modes to ragas, maqams and just-intonation tunings.
+The menu at the top left holds the presets. At the bottom of it, *save this as a preset...* keeps everything as it is now under a name of your choosing; your own presets then appear in the menu under *yours*, and *show the presets folder* opens where they are kept (they are ordinary files, so you can copy, rename or delete them there). *Randomize* makes a new patch with every control somewhere new. The pitch panel's menu picks the scale that the pitch shifter and the JI delay follow, from Western modes to ragas, maqams and just-intonation tunings.
 
 ## The hydrophone
 

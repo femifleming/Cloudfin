@@ -429,7 +429,7 @@ namespace
         static const std::vector<CPreset> l {
             { "Cloudfin", "start", nullptr, {} },
             // ---- feedback: the loop pushed until it sings on its own
-            { "Endless Slide", "feedback", "The Well-Tuned Piano (La Monte Young)",
+            { "Endless Sky", "feedback", "The Well-Tuned Piano (La Monte Young)",
               { { ids::masterFb, 0.9f }, { ids::psShift, 7.0f }, { ids::psFeedback, 0.6f }, { ids::psMix, 0.4f },
                 { ids::rvDecay, 10.0f }, { ids::rvMix, 0.45f }, { ids::dlMix, 0.3f }, { ids::dlFeedback, 0.45f } } },
             { "Bloom Loop", "feedback", nullptr,
@@ -566,6 +566,40 @@ void CloudfinProcessor::setStateInformation (const void* data, int sizeInBytes)
                 fp::GrainShifter::makeShape (fp::GrainShifter::saw, t);
             setGrainShape (t);
         }
+}
+
+//==============================================================================
+File CloudfinProcessor::userPresetFolder() const
+{
+   #if JUCE_MAC
+    const auto base = File::getSpecialLocation (File::userApplicationDataDirectory).getChildFile ("Application Support");
+   #else
+    const auto base = File::getSpecialLocation (File::userApplicationDataDirectory);   // AppData\Roaming on Windows, ~/.config on Linux
+   #endif
+    return base.getChildFile ("FreakiePie").getChildFile (getName()).getChildFile ("Presets");
+}
+
+Array<File> CloudfinProcessor::userPresets() const
+{
+    auto files = userPresetFolder().findChildFiles (File::findFiles, false, "*" + presetExtension());
+    files.sort();
+    return files;
+}
+
+bool CloudfinProcessor::saveUserPreset (const File& file)
+{
+    MemoryBlock mb;
+    getStateInformation (mb);
+    const auto target = file.withFileExtension (presetExtension());
+    return target.getParentDirectory().createDirectory().wasOk() && target.replaceWithData (mb.getData(), mb.getSize());
+}
+
+bool CloudfinProcessor::loadUserPreset (const File& file)
+{
+    MemoryBlock mb;
+    if (! file.existsAsFile() || ! file.loadFileAsData (mb) || mb.getSize() == 0) return false;
+    setStateInformation (mb.getData(), (int) mb.getSize());
+    return true;
 }
 
 #ifndef CLOUDFIN_AS_BASE

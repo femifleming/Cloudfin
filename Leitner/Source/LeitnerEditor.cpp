@@ -5,7 +5,17 @@ using namespace juce;
 namespace lt
 {
 const Colour paper (0xfff3f0e8), ink (0xff141414), faint (0xff8c8880), red (0xffc4281c);
-Font typed (float h, bool bold) { return Font (FontOptions ("American Typewriter", h, bold ? Font::bold : Font::plain)); }
+// a typewriter face: American Typewriter on macOS, Courier New on Windows, the system's monospace elsewhere
+Font typed (float h, bool bold)
+{
+   #if JUCE_MAC
+    return Font (FontOptions ("American Typewriter", h, bold ? Font::bold : Font::plain));
+   #elif JUCE_WINDOWS
+    return Font (FontOptions ("Courier New", h * 0.98f, Font::bold));
+   #else
+    return Font (FontOptions (Font::getDefaultMonospacedFontName(), h * 0.92f, bold ? Font::bold : Font::plain));
+   #endif
+}
 
 //==============================================================================
 Rule::Rule (RangedAudioParameter& main, RangedAudioParameter* d, const String& n, bool m)
@@ -224,8 +234,8 @@ void Room::paint (Graphics& g)
         if (axis == 0) { n = { side, 0, 0 }; t1 = { 0, 1, 0 }; t2 = { 0, 0, 1 }; }
         if (axis == 1) { n = { 0, side, 0 }; t1 = { 1, 0, 0 }; t2 = { 0, 0, 1 }; }
         if (axis == 2) { n = { 0, 0, side }; t1 = { 1, 0, 0 }; t2 = { 0, 1, 0 }; }
-        const bool near = n.dot (V.f) < -0.25f;
-        g.setColour (ink.withAlpha (near ? 0.16f : 0.75f));
+        const bool nearSide = n.dot (V.f) < -0.25f;
+        g.setColour (ink.withAlpha (nearSide ? 0.16f : 0.75f));
         for (int i = 0; i < N; ++i)
             for (int j = 0; j < N; ++j)
             {
@@ -453,16 +463,7 @@ LeitnerEditor::LeitnerEditor (LeitnerProcessor& p) : AudioProcessorEditor (&p), 
         parts.add (hold); content.addAndMakeVisible (hold);
 
         presetBtn.setBounds (506, 738, 238, kRow + 2);
-        presetBtn.onClick = [this]
-        {
-            PopupMenu m; String group;
-            for (int i = 0; i < proc.getNumPrograms(); ++i)
-            {
-                if (proc.getProgramGroup (i) != group) { group = proc.getProgramGroup (i); if (i > 0) m.addSectionHeader (group); }
-                m.addItem (i + 1, proc.getProgramName (i), true, i == proc.getCurrentProgram());
-            }
-            m.showMenuAsync (PopupMenu::Options().withTargetComponent (presetBtn), [this] (int r) { if (r > 0) proc.setCurrentProgram (r - 1); });
-        };
+        presetBtn.onClick = [this] { programMenu(); };
         randomBtn.setButtonText ("a random patch");
         randomBtn.setBounds (756, 738, 238, kRow + 2);
         randomBtn.onClick = [this] { proc.randomize(); };
@@ -571,6 +572,36 @@ void LeitnerEditor::paintSheets (Graphics& g)
     }
 }
 
+// the programs: Leitner's own, Cloudfin's sound programs, yours, and saving
+void LeitnerEditor::programMenu()
+{
+    PopupMenu m; String group;
+    for (int i = 0; i < proc.getNumPrograms(); ++i)
+    {
+        if (proc.getProgramGroup (i) != group) { group = proc.getProgramGroup (i); m.addSectionHeader (group); }
+        m.addItem (i + 1, proc.getProgramName (i), true, userShown.isEmpty() && i == proc.getCurrentProgram());
+    }
+    const auto files = proc.userPresets();
+    if (! files.isEmpty()) m.addSectionHeader ("yours");
+    for (int i = 0; i < files.size(); ++i) m.addItem (1001 + i, files[i].getFileNameWithoutExtension(), true, files[i].getFileNameWithoutExtension() == userShown);
+    m.addSeparator();
+    m.addItem (2000, "save this as a preset...");
+    m.addItem (2001, "show the presets folder");
+    m.showMenuAsync (PopupMenu::Options().withTargetComponent (presetBtn), [this, files] (int r)
+    {
+        if (r >= 1 && r <= 1000) { proc.setCurrentProgram (r - 1); userShown.clear(); }
+        else if (r > 1000 && r < 2000) { if (proc.loadUserPreset (files[r - 1001])) userShown = files[r - 1001].getFileNameWithoutExtension(); }
+        else if (r == 2000)
+        {
+            proc.userPresetFolder().createDirectory();
+            chooser = std::make_unique<FileChooser> ("Save this as a preset", proc.userPresetFolder().getChildFile ("my space" + proc.presetExtension()), "*" + proc.presetExtension());
+            chooser->launchAsync (FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
+                                  [this] (const FileChooser& fc) { const auto f = fc.getResult(); if (f != File() && proc.saveUserPreset (f)) userShown = f.getFileNameWithoutExtension(); });
+        }
+        else if (r == 2001) { proc.userPresetFolder().createDirectory(); proc.userPresetFolder().revealToUser(); }
+    });
+}
+
 void LeitnerEditor::clickOrder (Point<int> pt)
 {
     for (int i = 1; i < (int) orderWords.size(); ++i)
@@ -589,7 +620,8 @@ void LeitnerEditor::timerCallback()
     const auto packed = CloudfinProcessor::packOrder (proc.getOrder());
     const int fig = proc.figure->getIndex(), out = proc.orderNow.load() * 100 + proc.channelsNow.load();
     if (packed != seenOrder || fig != seenFigure || out != seenOut) { seenOrder = packed; seenFigure = fig; seenOut = out; content.repaint(); }
-    const String name = "program: " + proc.getProgramName (proc.getCurrentProgram());
+    if (const int pr = proc.getCurrentProgram(); pr != seenProgram) { if (seenProgram >= 0) userShown.clear(); seenProgram = pr; }
+    const String name = "program: " + (userShown.isNotEmpty() ? userShown : proc.getProgramName (proc.getCurrentProgram()));
     if (presetBtn.getButtonText() != name) presetBtn.setButtonText (name);
     for (auto* c : parts) if (auto* r = dynamic_cast<lt::Rule*> (c); r != nullptr && r->live != nullptr) r->repaint();
 }

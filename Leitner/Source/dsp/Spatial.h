@@ -313,7 +313,7 @@ public:
         for (auto& b : send) b.assign (2048, 0.0f);
         for (auto& b : wet) b.assign (2048, 0.0f);
         for (auto& l : lines) l = Line {};
-        phase = 0.0; first = true; roomSm = 0.0f; levelSm = 1.0f;
+        phase = 0.0; first = true; roomSm = 0.0f; levelSm = 1.0f; guard = 1.0f;
         st = State {}; turnTarget = heightTarget = 0.0f; length = 1.0f;
     }
 
@@ -423,6 +423,20 @@ public:
         const float lstep = (p.level - levelSm) / (float) n;
         for (int i = 0; i < n; ++i) { levelSm += lstep; for (int c = 0; c < used; ++c) out[c][i] *= levelSm; }
         levelSm = p.level;
+
+        // a ceiling: if the omni channel would pass full scale, every channel is turned down together (so the
+        // directions stay true), at once, and let back up over a fifth of a second. It is a safety net: at
+        // ordinary levels it does nothing.
+        {
+            const float up = 1.0f / (float) (0.2 * sr);
+            for (int i = 0; i < n; ++i)
+            {
+                const float w = std::abs (out[0][i]);
+                guard = std::min (1.0f, guard + up);
+                if (w * guard > 0.95f) guard = 0.95f / w;
+                if (guard < 1.0f) for (int c = 0; c < used; ++c) out[c][i] *= guard;
+            }
+        }
     }
 
 private:
@@ -487,6 +501,9 @@ private:
             ga = std::cos (0.5f * kPi * c); gb = std::sin (0.5f * kPi * c);
         }
         lvl *= std::clamp (1.0f - 0.7f * p.lift * here.z, 0.0f, 2.0f);   // lifting: it thins as it rises
+        // (inside the sphere the encoder lifts a sound by up to 6 dB at the very middle; two lines meeting there
+        // would add to 12, so half of that lift is taken back)
+        lvl *= std::sqrt (0.5f + 0.5f * std::min (1.0f, 0.5f * (a.length() + b.length()) / 0.7f));
         const auto ya = fp::ambi::encodeInside (a, order);
         target = {};
         const int used = fp::ambi::chFor (order);
@@ -510,7 +527,7 @@ private:
     float turnTarget = 0.0f, heightTarget = 0.0f, length = 1.0f;
     fp::ambi::SphereReverb reverb;
     std::array<std::vector<float>, kCh> send, wet;
-    float roomSm = 0.0f, levelSm = 1.0f;
+    float roomSm = 0.0f, levelSm = 1.0f, guard = 1.0f;
     int tail = 0;
     bool first = true;
 };
