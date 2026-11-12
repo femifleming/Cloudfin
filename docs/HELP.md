@@ -1,6 +1,6 @@
 # Cloudfin: help
 
-Cloudfin is a dreamy, floating multi-effect in a Frutiger Aero look, after a recurring dream of an endless white waterslide with blue light shining through it. Seven effects run one after another, in any order you like, with a feedback loop around them all and a slow random drift that can move every knob on its own.
+Cloudfin is a dreamy, floating multi-effect in a Frutiger Aero look, after a recurring dream of clouds heaped over calm water with light shining through them. The window is mirror symmetrical: whatever sits on the left has its twin on the right. It is shown in sixteen colours with a fine dither (each of day, dusk and night has its own sixteen), so soft gradients become a printed-looking pattern while the type stays sharp. Seven effects run one after another, in any order you like, with a feedback loop around them all and a slow random drift that can move every knob on its own.
 
 ![Cloudfin](screenshot.jpg)
 
@@ -26,11 +26,11 @@ Cloudfin is a dreamy, floating multi-effect in a Frutiger Aero look, after a rec
 
 Every control is a glass bubble with water inside it: the water level is the value. Drag up or down to turn it, and double-click to put it back to where it started. Each effect has a *mix* knob, and an effect with its mix at zero is out of the way.
 
-Under each knob sits a smaller bubble, its attenuverter, which belongs to the drift (see below).
+In the bottom corner of each knob sits a smaller bubble, its attenuverter, which belongs to the drift (see below).
 
 ## The order of the effects
 
-The row of chips under the title is the signal path, left to right: smear, pitch, formant, grains, delay, reverb, comp. Drag a chip along the row to move that effect somewhere else in the chain. *Shuffle* picks a random order, and double-clicking the strip puts it back. Every change crossfades through a short 20 ms dip, so it never clicks, and the order is saved with your session.
+The row of chips under the title is the signal path, left to right: smear, pitch, formant, grains, delay, reverb, comp. Drag a chip along the row to move that effect somewhere else in the chain. *Shuffle*, at the left end of the strip, picks a random order, and double-clicking the strip puts it back. Every change crossfades through a short 20 ms dip, so it never clicks, and the order is saved with your session.
 
 The numbers on the panels follow the order, so you can always see which effect hears which.
 
@@ -64,7 +64,7 @@ A stereo delay with three taps a side, hard-panned left and right. The taps are 
 
 ## Compander
 
-A compressor that can also lift quiet sounds. *Threshold* and *ratio* work as on any compressor, with *attack*, *release* and *makeup*. *Below* acts on everything under the threshold: lift it (−) and quiet tails swell up, which makes feedback bloom; sink it (+) and the sound dries out. The little tube on the right shows how much it's turning the sound up or down.
+A compressor that can also lift quiet sounds. *Threshold* and *ratio* work as on any compressor, with *attack*, *release* and *makeup*. *Below* acts on everything under the threshold: lift it (−) and quiet tails swell up, which makes feedback bloom; sink it (+) and the sound dries out. The little glass column at each end of the row shows how much it's turning the sound up or down (the two show the same thing).
 
 ## Feedback
 
@@ -72,26 +72,26 @@ A compressor that can also lift quiet sounds. *Threshold* and *ratio* work as on
 
 ## Drift: every knob moving on its own
 
-Each knob has its own slow random voltage. The small bubble under a knob is its attenuverter: push it up (+) and the voltage moves the knob up, pull it down (−) and it moves the knob down, leave it in the middle and the knob stays still. A green line on the knob shows where it is right now. *Rate* sets how fast the voltages wander and *slew* how smoothly they glide.
+Each knob has its own slow random voltage. The small bubble in the bottom corner of a knob is its attenuverter: push it up (+) and the voltage moves the knob up, pull it down (−) and it moves the knob down, leave it in the middle and the knob stays still. A green line on the knob shows where it is right now. *Rate* sets how fast the voltages wander and *slew* how smoothly they glide.
 
 ## Presets, random and the scale
 
-The menu at the top right holds the presets. *Randomize* makes a new patch with every control somewhere new. The pitch panel's menu picks the scale that the pitch shifter and the JI delay follow, from Western modes to ragas, maqams and just-intonation tunings.
+The menu at the top left holds the presets. *Randomize* makes a new patch with every control somewhere new. The pitch panel's menu picks the scale that the pitch shifter and the JI delay follow, from Western modes to ragas, maqams and just-intonation tunings.
 
 ## The hydrophone
 
-The capsule at the top left plays a hydrophone recording of moving water. Drag it to set how loud it is (double-click to switch it off). The button next to it sends it *onto the output*, on top of everything, or *into the input*, so it goes through all the effects with your sound.
+The capsule at the top right plays a hydrophone recording of moving water. Drag it to set how loud it is (double-click to switch it off). The button next to it sends it *onto the output*, on top of everything, or *into the input*, so it goes through all the effects with your sound.
 
 ## Day, dusk and night
 
-The switch at the top right changes the light: day, dusk (the default) or night. It's saved with your session. The sky and the slide drift behind the glass as you move the mouse.
+The switch at the top left changes the light: day, dusk (the default) or night. It's saved with your session. The sky, the clouds and the sea drift behind the glass as you move the mouse.
 
 ![Day](help/day.jpg)
 ![Night](help/night.jpg)
 
 ## Gravity
 
-Turn on *gravity* (top left) and every control falls, rolls and piles up at the bottom of the window, with a slosh of water to go with it. Move the plug-in window and they tumble. Turn it off and they float home. Everything still works while they're piled up.
+Turn on *gravity* (top right) and every control falls, rolls and piles up at the bottom of the window, with a slosh of water to go with it. Move the plug-in window and they tumble. Turn it off and they float home. Everything still works while they're piled up.
 
 ![Gravity](help/gravity.jpg)
 

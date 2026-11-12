@@ -4,12 +4,12 @@
 #include "PluginProcessor.h"
 
 //==============================================================================
-// Frutiger Aero, after a recurring dream: an endless waterslide, light blue light
-// shining through mostly opaque white plastic.
-//   day   : bright sky, cool blue light through the tube
-//   dusk  : a water-aero sunset, a little darker, warm sunlight breaking through
-//           here and there (the default)
-//   night : deep blue under the stars and a moon; the slide glows from inside
+// Frutiger Aero, after a recurring dream: clouds heaped over calm water, light
+// coming through them. The whole window is the same on both sides of its centre line.
+//   day   : bright sky, a high sun, white cumulus over a blue sea
+//   dusk  : a water-aero sunset, a little darker, the sun on the horizon and warm
+//           light under the clouds (the default)
+//   night : deep blue under the stars and a moon; the clouds glow from inside
 struct Theme
 {
     int mode = 1;                   // 0 day, 1 dusk, 2 night
@@ -20,8 +20,8 @@ struct Theme
     juce::Colour titleShadow;
     juce::Colour ocean, aqua, aquaLight, glint, halo;   // water
     juce::Colour violet, lime, warm;
-    juce::Colour tubeRim, tube[6], tubeGlowA, tubeGlowB, seam;
-    juce::Colour pulseA, pulseB;    // light travelling along the slide
+    juce::Colour cloudShade, cloud[6], cloudGlowA, cloudGlowB;   // a cloud from its shaded underside to its lit top, and the light under it
+    juce::Colour glintA, glintB;    // the glow passing through the clouds
     juce::Colour panelTop, panelBottom, panelGlow, panelEdge, panelSlab;
     float gloss = 0.6f;
     juce::Colour rimA, rimB, rimC;  // soap-film iridescence
@@ -147,10 +147,10 @@ public:
     void poll (float dt);
     void shuffle();
 
-    static constexpr float chipW = 84.0f, gap = 20.0f;
+    static constexpr float chipW = 84.0f, gap = 20.0f, endW = 26.0f;   // endW: room at each end (in, and the loop back)
 
 private:
-    float slotX (int i) const noexcept { return (float) i * (chipW + gap); }
+    float slotX (int i) const noexcept { return endW + (float) i * (chipW + gap); }
     int stageAt (juce::Point<float>) const;
 
     CloudfinProcessor& proc;
@@ -210,7 +210,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    static constexpr int designW = 1500, designH = 790;
+    static constexpr int designW = 1500, designH = 668;
 
 private:
     struct Content : public juce::Component
@@ -244,12 +244,12 @@ private:
     void paintContent (juce::Graphics&);
     void layoutContent();
     void timerCallback() override;
-    void buildTube();
+    void buildClouds();
     void renderStatic (float scale);
     void drawBackScene (juce::Graphics&);
     void drawFrontScene (juce::Graphics&, bool panelsPart);   // the wordmark, or the glass frames
     void drawPanelGlass (juce::Graphics&, const Panel&);
-    void drawTubeLights (juce::Graphics&, float alpha);
+    void drawSkyLights (juce::Graphics&, float alpha);
     void drawAmbient (juce::Graphics&);
     void drawStars (juce::Graphics&);
     void drawBokehLayer (juce::Graphics&, bool foreground);
@@ -294,15 +294,19 @@ private:
     void stepWater (float dt);
     void drawWater (juce::Graphics&);
     void splash (float x, float strength);
-    juce::Rectangle<int> meterArea;
+    juce::Rectangle<int> meterAreas[2];        // the compander's gain meter, at each end of its row
 
-    // the waterslide
-    juce::Path tube, tubeOutline, farTube;
-    std::vector<juce::Point<float>> tubePts, tubeTan; // evenly spaced samples along the centre line
-    float tubeWidth = 128.0f, tubeStep = 4.0f;
+    // the clouds over the sea (dx: how far from the centre line; each is drawn on both sides)
+    struct Puff { float x, y, r; };
+    struct Cloud { float dx = 0, baseY = 0, w = 100, alpha = 1; std::vector<Puff> puffs; };
+    std::vector<Cloud> clouds;
+    static constexpr float horizonY = 540.0f;
+    // is this panel right of the centre line? (its title and badge mirror the left ones)
+    static bool mirrored (const Panel& p) noexcept { return p.r.getCentreX() > designW / 2 + 60; }
+    static juce::Point<float> mirrorOf (juce::Point<float> p) noexcept { return { (float) designW - p.x, p.y }; }
     std::vector<AmbientBubble> ambient;
 
-    // two cached layers: the sky + slide behind (it drifts with the mouse: parallax),
+    // two cached layers: the sky, clouds and sea behind (it drifts with the mouse: parallax),
     // and the glass panels in front
     juce::Image backLayer, frontLayer, panelLayer;   // panelLayer: the glass frames (they go when gravity's on)
     juce::Image farLayer;                            // on retina: the far layers composed at 1x each frame

@@ -11,6 +11,41 @@ using namespace juce;
 struct CloudfinTestAccess
 {
     static void farAt1x (CloudfinEditor& e, bool on) { e.composeFarAt1x = on; }
+    // the far scene by itself (sky, clouds, sea: nothing in front of it), to check it's the same on both sides
+    static Image backScene (CloudfinEditor& e)
+    {
+        Image img (Image::RGB, CloudfinEditor::designW, CloudfinEditor::designH, true);
+        Graphics g (img);
+        e.drawBackScene (g);
+        return img;
+    }
+    // how far the picture is from its own mirror image: the mean difference per channel, 0..255
+    static double asymmetry (const Image& img)
+    {
+        Image::BitmapData d (img, Image::BitmapData::readOnly);
+        double sum = 0.0;
+        for (int y = 0; y < d.height; ++y)
+            for (int x = 0; x < d.width / 2; ++x)
+            {
+                const auto a = d.getPixelColour (x, y), b = d.getPixelColour (d.width - 1 - x, y);
+                sum += std::abs (a.getRed() - b.getRed()) + std::abs (a.getGreen() - b.getGreen()) + std::abs (a.getBlue() - b.getBlue());
+            }
+        return sum / (3.0 * d.height * (d.width / 2));
+    }
+    // every panel has its mirror: the same rectangle reflected about the centre line (or it is its own)
+    static int unmirroredPanels (CloudfinEditor& e)
+    {
+        int bad = 0;
+        for (auto& p : e.panels)
+        {
+            const auto m = p.r.withX (CloudfinEditor::designW - p.r.getRight());
+            bool found = false;
+            for (auto& q : e.panels) found = found || q.r == m;
+            std::printf ("  panel %-15s x %4d  y %3d  w %4d  h %3d   mirror %s\n", p.title.toRawUTF8(), p.r.getX(), p.r.getY(), p.r.getWidth(), p.r.getHeight(), found ? "ok" : "MISSING");
+            if (! found) ++bad;
+        }
+        return bad;
+    }
     static void run (CloudfinEditor& e, bool gravity, int frames)
     {
         if (gravity) *e.proc.apvts.getRawParameterValue (ids::gravity) = 1.0f;   // the editor follows the parameter
@@ -262,6 +297,19 @@ int main (int argc, char** argv)
             FileOutputStream os (out);
             PNGImageFormat().writeImageToStream (img, os);
             std::printf ("wrote %s\n", out.getFullPathName().toRawUTF8());
+            if (! gravity)
+            {
+                // mirror symmetry: the far scene against its own reflection, and every panel against its twin
+                const auto back = CloudfinTestAccess::backScene (*ed);
+                File bo (base + suffix + "_back.png");
+                bo.deleteFile();
+                FileOutputStream bs (bo);
+                PNGImageFormat().writeImageToStream (back, bs);
+                const double asym = CloudfinTestAccess::asymmetry (back);
+                std::printf ("far scene%s: mean difference from its mirror image %.3f / 255%s\n", suffix.toRawUTF8(), asym, asym < 0.5 ? "" : "  <-- FAIL");
+                if (asym >= 0.5) ++fails;
+                if (theme == 1) fails += CloudfinTestAccess::unmirroredPanels (*ed);
+            }
         };
         shoot (1, false, "_dusk");
         shoot (0, false, "_day");

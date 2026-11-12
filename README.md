@@ -2,7 +2,7 @@
 
 # Cloudfin
 
-A dreamy, floating multi-effect in a Frutiger Aero look, after a recurring dream of an endless white waterslide with blue light shining through it.
+A dreamy, floating multi-effect in a Frutiger Aero look, after a recurring dream of clouds heaped over calm water with light shining through them. The whole window is mirror symmetrical, and shown through a sixteen-colour dithered screen, like a mid-90s display.
 
 Seven effects run one after another, in any order you like: drag the chips under the title to rearrange them. Every knob can drift on its own random voltage, and a feedback loop wraps the whole chain. A hydrophone recording of moving water can play into it or over it. Switch on gravity and every control falls and piles up at the bottom of the window.
 
@@ -11,6 +11,8 @@ Seven effects run one after another, in any order you like: drag the chips under
 - Linux: VST3, LV2 and a standalone app
 
 ![Cloudfin](docs/screenshot.jpg)
+
+> **Spatial audio version: [Leitner](Leitner/README.md).** Cloudfin as an Ambisonics encoder (3rd to 7th order, ACN/SN3D, for the IEM and SPARTA decoders): the sound travels through the room as two lines, after Bernhard Leitner's sound spaces. It lives in the [`Leitner`](Leitner) folder of this repository.
 
 **[How to use it: the full help page](docs/HELP.md)**
 
@@ -89,7 +91,7 @@ The tests (`-DCLOUDFIN_BUILD_TESTS=ON`) check the sound and drive the whole inte
 Cloudfin's code was written with Claude Code (Anthropic), working under the direction of its author, [femifleming](https://github.com/femifleming). This is what the author brought to it:
 
 - **The original effect chain.** Cloudfin began as a fork of the author's FreakiePie: a spectral gate/smear, a feedback pitch shifter locked to raga and microtonal scales (including La Monte Young's *The Well-Tuned Piano*), a live-buffer granular shifter with randomly slewed size, position and octave, a 500 Hz high-passed FDN reverb and a main feedback loop. It is meant to be live-safe, with no clicks and no latency.
-- **The aesthetic and where it comes from.** Frutiger Aero, from a recurring dream of a continuous waterslide, with light blue light shining through the mostly opaque white plastic tube. The knobs are wet and fill with water like bubbles, and float around.
+- **The aesthetic and where it comes from.** Frutiger Aero, from a recurring dream; first of a continuous waterslide with light blue light shining through it, now of clouds over water, laid out mirror symmetrically. The knobs are wet and fill with water like bubbles, and float around.
 - **The name and the split.** Cloudfin was named by the author and kept as a separate plug-in from FreakiePie.
 - **New stages and controls.**
   - A formant filter.

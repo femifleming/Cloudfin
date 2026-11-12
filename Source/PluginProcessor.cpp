@@ -1,5 +1,7 @@
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
+#ifndef CLOUDFIN_AS_BASE   // (defined when another plug-in builds on this processor and brings its own editor)
+ #include "PluginEditor.h"
+#endif
 #include <BinaryData.h>
 
 using namespace juce;
@@ -182,9 +184,14 @@ AudioProcessorValueTreeState::ParameterLayout CloudfinProcessor::createLayout()
 
 //==============================================================================
 CloudfinProcessor::CloudfinProcessor()
-    : AudioProcessor (BusesProperties()
-                          .withInput  ("Input",  AudioChannelSet::stereo(), true)
-                          .withOutput ("Output", AudioChannelSet::stereo(), true)),
+    : CloudfinProcessor (BusesProperties()
+                             .withInput  ("Input",  AudioChannelSet::stereo(), true)
+                             .withOutput ("Output", AudioChannelSet::stereo(), true))
+{
+}
+
+CloudfinProcessor::CloudfinProcessor (const BusesProperties& buses)
+    : AudioProcessor (buses),
       apvts (*this, nullptr, "Cloudfin", createLayout())
 {
     const auto& t = modTargets();
@@ -386,7 +393,11 @@ void CloudfinProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer&)
     spectralFreezeAmount.store (engine.getSpectralFreezeAmount());
 }
 
+#ifndef CLOUDFIN_AS_BASE
 AudioProcessorEditor* CloudfinProcessor::createEditor() { return new CloudfinEditor (*this); }
+#else
+AudioProcessorEditor* CloudfinProcessor::createEditor() { return nullptr; }
+#endif
 
 //==============================================================================
 
@@ -557,4 +568,6 @@ void CloudfinProcessor::setStateInformation (const void* data, int sizeInBytes)
         }
 }
 
+#ifndef CLOUDFIN_AS_BASE
 AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new CloudfinProcessor(); }
+#endif

@@ -13,6 +13,18 @@ namespace
 
 //==============================================================================
 // Themes
+// How the type is set: 30 % bigger than it was first drawn and heavier, and kept out of the dither
+// (it is drawn in one exact colour that the screen passes through untouched, so the smallest values
+// stay solid). The panels are packed tight: each knob's attenuverter sits in its bottom corner.
+namespace look
+{
+    struct Tune { float type = 1.3f; bool heavy = true, crisp = true, compact = true; };
+    static const Tune& tune() { static const Tune t; return t; }
+    // small type: at full strength, in the theme's one text colour, when it is to stay out of the dither
+    static Colour text (const Theme& t, Colour asDrawn) { return tune().crisp ? t.deep : asDrawn; }
+    static int rows (int h) { return roundToInt ((float) h * (tune().type > 1.0f ? 0.5f + 0.5f * tune().type + 0.12f : 1.0f)); }
+}
+
 const Theme& Theme::dayTheme()
 {
     static const Theme t = []
@@ -24,11 +36,11 @@ const Theme& Theme::dayTheme()
         x.ocean = Colour (0xff1479b8); x.aqua = Colour (0xff35c3f2); x.aquaLight = Colour (0xffa6e9ff); x.glint = Colours::white;
         x.halo = Colours::transparentBlack;
         x.violet = Colour (0xff9886ff); x.lime = Colour (0xff86dc5e); x.warm = Colour (0xffffd27a);
-        x.tubeRim = Colour (0xff9fc3dd);
+        x.cloudShade = Colour (0xff9fc3dd);
         const uint32 tc[6] = { 0xffcadff0, 0xffd9eaf7, 0xffe7f2fb, 0xfff2f8fd, 0xfffafdff, 0xffffffff };
-        for (int i = 0; i < 6; ++i) x.tube[i] = Colour (tc[i]);
-        x.tubeGlowA = Colour (0xff62c6ff); x.tubeGlowB = Colour (0xff8fd9ff); x.seam = Colour (0xffadcbe1);
-        x.pulseA = Colour (0xff4fc3ff); x.pulseB = Colour (0xff58ccff);
+        for (int i = 0; i < 6; ++i) x.cloud[i] = Colour (tc[i]);
+        x.cloudGlowA = Colour (0xff62c6ff); x.cloudGlowB = Colour (0xff8fd9ff);
+        x.glintA = Colour (0xff4fc3ff); x.glintB = Colour (0xff58ccff);
         x.panelTop = Colours::white.withAlpha (0.52f); x.panelBottom = Colour (0xffe2f4ff).withAlpha (0.32f);
         x.panelGlow = Colour (0xff35c3f2).withAlpha (0.18f); x.panelEdge = Colours::white.withAlpha (0.95f);
         x.panelSlab = Colour (0xff8dbadb).withAlpha (0.45f); x.gloss = 0.6f;
@@ -51,11 +63,11 @@ const Theme& Theme::duskTheme()
         x.ocean = Colour (0xff1b5ea8); x.aqua = Colour (0xff3fa6e6); x.aquaLight = Colour (0xffa8d4ff); x.glint = Colour (0xffffd9b0);
         x.halo = Colours::transparentBlack;
         x.violet = Colour (0xffa08cff); x.lime = Colour (0xff9be07a); x.warm = Colour (0xffffb86b);
-        x.tubeRim = Colour (0xff9097c2);
+        x.cloudShade = Colour (0xff9097c2);
         const uint32 tc[6] = { 0xffc6c8e3, 0xffd5d4ec, 0xffe4def0, 0xfff0e7f1, 0xfff8eeee, 0xfffff6ee };
-        for (int i = 0; i < 6; ++i) x.tube[i] = Colour (tc[i]);
-        x.tubeGlowA = Colour (0xffff9e6b); x.tubeGlowB = Colour (0xff8fb2ff); x.seam = Colour (0xffa9a9cf);
-        x.pulseA = Colour (0xffffa65e); x.pulseB = Colour (0xff6f9dff);
+        for (int i = 0; i < 6; ++i) x.cloud[i] = Colour (tc[i]);
+        x.cloudGlowA = Colour (0xffff9e6b); x.cloudGlowB = Colour (0xff8fb2ff);
+        x.glintA = Colour (0xffffa65e); x.glintB = Colour (0xff6f9dff);
         x.panelTop = Colours::white.withAlpha (0.42f); x.panelBottom = Colour (0xffffe4d6).withAlpha (0.26f);
         x.panelGlow = Colour (0xffffb86b).withAlpha (0.22f); x.panelEdge = Colours::white.withAlpha (0.95f);
         x.panelSlab = Colour (0xff9a7fb0).withAlpha (0.45f); x.gloss = 0.6f;
@@ -78,11 +90,11 @@ const Theme& Theme::nightTheme()
         x.ocean = Colour (0xff1665c8); x.aqua = Colour (0xff3fd2ff); x.aquaLight = Colour (0xffaaf2ff); x.glint = Colour (0xffd8f6ff);
         x.halo = Colour (0xff3fd2ff).withAlpha (0.26f);
         x.violet = Colour (0xffa58cff); x.lime = Colour (0xff9cf07a); x.warm = Colour (0xffffe2b0);
-        x.tubeRim = Colour (0xff22356a);
+        x.cloudShade = Colour (0xff22356a);
         const uint32 tc[6] = { 0xff2e4280, 0xff3a5292, 0xff4864a6, 0xff5a7bba, 0xff7096cf, 0xff94b8e6 };
-        for (int i = 0; i < 6; ++i) x.tube[i] = Colour (tc[i]);
-        x.tubeGlowA = Colour (0xff3fd2ff); x.tubeGlowB = Colour (0xff8fefff); x.seam = Colour (0xff1c2b5c);
-        x.pulseA = Colour (0xff42e0ff); x.pulseB = Colour (0xff9a86ff);
+        for (int i = 0; i < 6; ++i) x.cloud[i] = Colour (tc[i]);
+        x.cloudGlowA = Colour (0xff3fd2ff); x.cloudGlowB = Colour (0xff8fefff);
+        x.glintA = Colour (0xff42e0ff); x.glintB = Colour (0xff9a86ff);
         x.panelTop = Colour (0xff1d2f66).withAlpha (0.60f); x.panelBottom = Colour (0xff0a1332).withAlpha (0.66f);
         x.panelGlow = Colour (0xff3fd2ff).withAlpha (0.20f); x.panelEdge = Colour (0xffbfe6ff).withAlpha (0.5f);
         x.panelSlab = Colour (0xff02061a).withAlpha (0.6f); x.gloss = 0.14f;
@@ -118,7 +130,7 @@ AeroLookAndFeel::AeroLookAndFeel() { setTheme (Theme::duskTheme()); }
 void AeroLookAndFeel::setTheme (const Theme& t)
 {
     th = &t;
-    setColour (Slider::textBoxTextColourId, t.deep.withAlpha (0.8f));
+    setColour (Slider::textBoxTextColourId, look::text (t, t.deep.withAlpha (0.8f)));
     setColour (Slider::textBoxOutlineColourId, Colours::transparentBlack);
     setColour (Slider::textBoxBackgroundColourId, Colours::transparentBlack);
     setColour (Slider::textBoxHighlightColourId, t.aqua.withAlpha (0.4f));
@@ -141,7 +153,9 @@ void AeroLookAndFeel::setTheme (const Theme& t)
 
 Font AeroLookAndFeel::uiFont (float h, bool bold)
 {
-    return Font (FontOptions ("Avenir Next", h, bold ? Font::bold : Font::plain));
+    const auto& t = look::tune();
+    if (t.heavy) return Font (FontOptions ("Avenir Next", bold ? "Heavy" : "Demi Bold", h * t.type));
+    return Font (FontOptions ("Avenir Next", h * t.type, bold ? Font::bold : Font::plain));
 }
 
 Font AeroLookAndFeel::titleFont (float h)
@@ -159,7 +173,7 @@ Label* AeroLookAndFeel::createSliderTextBox (Slider& s)
     l->setFont (uiFont (11.5f));
     l->setColour (Label::outlineColourId, Colours::transparentBlack);
     l->setColour (Label::backgroundColourId, Colours::transparentBlack);
-    l->setColour (Label::textColourId, th->deep.withAlpha (0.8f));
+    l->setColour (Label::textColourId, look::text (*th, th->deep.withAlpha (0.8f)));
     return l;
 }
 
@@ -391,7 +405,7 @@ void AeroLookAndFeel::drawToggleButton (Graphics& g, ToggleButton& b, bool highl
     const float fill = b.getProperties().contains ("fill") ? (float) b.getProperties()["fill"] : (on ? 0.85f : 0.0f);
     drawWaterBubble (g, bubble, fill, big ? 0.3f : 0.7f, on || highlighted);
 
-    g.setColour (th->deep.withAlpha (b.isEnabled() ? 0.95f : 0.4f));
+    g.setColour (look::text (*th, th->deep.withAlpha (b.isEnabled() ? 0.95f : 0.4f)));
     if (big)
     {
         g.setFont (uiFont (13.5f, true));
@@ -465,7 +479,7 @@ void AeroLookAndFeel::drawButtonBackground (Graphics& g, Button& b, const Colour
 
 void AeroLookAndFeel::drawButtonText (Graphics& g, TextButton& b, bool, bool down)
 {
-    g.setFont (uiFont (b.getHeight() > 22 ? 12.5f : 11.0f, true));
+    g.setFont (uiFont (b.getHeight() > 22 ? 12.5f : 9.0f, true));
     g.setColour (down ? Colours::white : th->ink);
     g.drawText (b.getButtonText(), b.getLocalBounds().withTrimmedBottom (3).translated (0, down ? 2 : 0), Justification::centred);
 }
@@ -518,7 +532,7 @@ FloatKnob::FloatKnob (CloudfinProcessor& p, const char* paramId, const String& t
     addAndMakeVisible (name);
 
     main.setSliderStyle (Slider::RotaryVerticalDrag);
-    main.setTextBoxStyle (Slider::TextBoxBelow, false, 84, 15);
+    main.setTextBoxStyle (Slider::TextBoxBelow, false, 84, look::rows (15));
     main.setMouseDragSensitivity (220);
     main.setColour (Slider::textBoxOutlineColourId, Colours::transparentBlack);
     main.setColour (Slider::textBoxBackgroundColourId, Colours::transparentBlack);
@@ -546,13 +560,21 @@ FloatKnob::FloatKnob (CloudfinProcessor& p, const char* paramId, const String& t
 void FloatKnob::applyTheme (const Theme& t)
 {
     name.setColour (Label::textColourId, t.deep);
-    main.setColour (Slider::textBoxTextColourId, t.deep.withAlpha (0.8f));
+    main.setColour (Slider::textBoxTextColourId, look::text (t, t.deep.withAlpha (0.8f)));
 }
 
 void FloatKnob::resized()
 {
     auto r = getLocalBounds();
-    name.setBounds (r.removeFromTop (15));
+    name.setBounds (r.removeFromTop (look::rows (15)));
+    if (look::tune().compact)
+    {
+        // packed tight: the attenuverter sits in the bottom corner of the knob's own space instead of under it
+        if (hasAtt) att.setBounds (r.getRight() - 26, r.getBottom() - look::rows (15) - 24, 26, 26);
+        main.setBounds (r);
+        att.toFront (false);
+        return;
+    }
     if (hasAtt)
         att.setBounds (r.removeFromBottom (32).withSizeKeepingCentre (30, 30));
     main.setBounds (r);
@@ -738,7 +760,7 @@ void ShapeEditor::paint (Graphics& g)
     }
 
     g.setFont (AeroLookAndFeel::uiFont (10.5f, true));
-    g.setColour (T.mist.withAlpha (0.85f));
+    g.setColour (look::text (T, T.mist.withAlpha (0.85f)));
     g.drawText ("draw the grain", plot.reduced (6.0f, 2.0f), Justification::topRight);
 }
 
@@ -768,10 +790,10 @@ void ChainStrip::mouseDown (const MouseEvent& e)
 void ChainStrip::mouseDrag (const MouseEvent& e)
 {
     if (dragStage < 0) return;
-    dragX = jlimit (0.0f, slotX (fp::numStages - 1), e.position.x - grabOffset);
+    dragX = jlimit (slotX (0), slotX (fp::numStages - 1), e.position.x - grabOffset);
     chipX[dragStage] = dragX;
     // slot it in where it's hovering; the others slide out of the way
-    const int want = jlimit (0, fp::numStages - 1, roundToInt (dragX / (chipW + gap)));
+    const int want = jlimit (0, fp::numStages - 1, roundToInt ((dragX - endW) / (chipW + gap)));
     int cur = 0;
     for (int i = 0; i < fp::numStages; ++i) if (order[(size_t) i] == dragStage) cur = i;
     if (want != cur)
@@ -834,7 +856,8 @@ void ChainStrip::paint (Graphics& g)
     g.setColour (T.deep.withAlpha (0.55f));
     for (int i = 0; i < fp::numStages - 1; ++i)
         g.drawText (chevGlyph, Rectangle<float> (slotX (i) + chipW, 0, gap, h), Justification::centred);
-    g.drawText (loopGlyph, Rectangle<float> (slotX (fp::numStages - 1) + chipW, 0, 26.0f, h), Justification::centred);
+    g.drawText (chevGlyph, Rectangle<float> (0, 0, endW, h), Justification::centred);                                  // in
+    g.drawText (loopGlyph, Rectangle<float> (slotX (fp::numStages - 1) + chipW, 0, endW, h), Justification::centred);   // and round again
 
     auto chip = [&] (int st, bool lifted)
     {
@@ -975,6 +998,110 @@ void ThemeSwitch::paint (Graphics& g)
 }
 
 //==============================================================================
+//==============================================================================
+// The whole window goes through a sixteen-colour screen: it is drawn as ever into a picture the
+// size of the window (in points, so on a Retina display each of its pixels is doubled), every pixel
+// is snapped to that mode's sixteen colours through an 8 x 8 ordered dither, and the picture is put
+// up without smoothing. Edges and type stay as sharp as they were; every soft gradient becomes a fine
+// printed-looking pattern, like a mid-90s display showing more than it has colours for.
+namespace
+{
+// sixteen colours for each mode, picked (by median cut) from the window as it looked before
+const uint32 ditherPalettes[3][16] = {
+    { 0x4f91ba, 0x7ab4d6, 0x8dc0dc, 0xa1c4db, 0x91cce8, 0xa7cae0, 0xaccce1, 0xb4cfe1, 0xa2dbf2, 0xbdd8e9, 0xc6d9e7, 0xcce6f5, 0xdbe8ef, 0xdeedf7, 0xe4f2f9, 0xf3f8fb },   // day
+    { 0x586895, 0x7580a8, 0x7c91b8, 0xa696a9, 0x92a0c1, 0xafa1b5, 0xb7a5b4, 0xbfa6ad, 0xb0afc4, 0xc6b2b9, 0xacbfd5, 0xcac2cd, 0xdac8cb, 0xdfd4d8, 0xe6dcdf, 0xf2edee },   // dusk
+    { 0x070e28, 0x0f1731, 0x101c39, 0x161f37, 0x18233d, 0x192844, 0x202942, 0x25304a, 0x283857, 0x2e436a, 0x3d4867, 0x485776, 0x4b7aa7, 0x7c8da9, 0x7dcaea, 0xcddbea } }; // night
+
+struct DitherScreen : public CachedComponentImage
+{
+    DitherScreen (Component& c, std::function<int()> modeNow, std::function<float()> scaleNow) : comp (c), mode (std::move (modeNow)), scale (std::move (scaleNow))
+    {
+        // the 8 x 8 Bayer matrix, as how far each pixel is pushed before it's snapped (about half the gap between neighbouring colours either way)
+        int m[8][8] = { { 0 } };
+        for (int n = 1; n < 8; n *= 2)
+            for (int y = 0; y < n; ++y)
+                for (int x = 0; x < n; ++x)
+                {
+                    const int v = 4 * m[y][x];
+                    m[y][x] = v; m[y][x + n] = v + 2; m[y + n][x] = v + 3; m[y + n][x + n] = v + 1;
+                }
+        for (int y = 0; y < 8; ++y)
+            for (int x = 0; x < 8; ++x) offset[y][x] = roundToInt ((((float) m[y][x] + 0.5f) / 64.0f - 0.5f) * 131.0f);
+    }
+
+    void paint (Graphics& g) override
+    {
+        const float s = jmax (0.25f, scale());
+        const int w = roundToInt ((float) comp.getWidth() * s), h = roundToInt ((float) comp.getHeight() * s);
+        if (image.getWidth() != w || image.getHeight() != h) image = Image (Image::ARGB, w, h, true);
+        {
+            Graphics ig (image);
+            ig.addTransform (AffineTransform::scale (s));
+            comp.paintEntireComponent (ig, true);
+        }
+        if (const int now = jlimit (0, 2, mode()); now != lutMode) buildLut (now);
+        const Colour keys[2] = { Theme::forMode (lutMode).deep, Theme::forMode (lutMode).ink };
+        {
+            Image::BitmapData px (image, Image::BitmapData::readWrite);
+            for (int y = 0; y < h; ++y)
+            {
+                auto* row = (PixelARGB*) px.getLinePointer (y);
+                const int* off = offset[y & 7];
+                for (int x = 0; x < w; ++x)
+                {
+                    if (look::tune().crisp)
+                    {
+                        // type drawn in the theme's text colour goes through as it is: solid, never dithered
+                        const int r0 = row[x].getRed(), g0 = row[x].getGreen(), b0 = row[x].getBlue();
+                        bool isText = false;
+                        for (const auto& k : keys)
+                            if (std::abs (r0 - (int) k.getRed()) < 14 && std::abs (g0 - (int) k.getGreen()) < 14 && std::abs (b0 - (int) k.getBlue()) < 14)
+                            { row[x].setARGB (255, k.getRed(), k.getGreen(), k.getBlue()); isText = true; break; }
+                        if (isText) continue;
+                    }
+                    const int o = off[x & 7];
+                    const int r = jlimit (0, 255, (int) row[x].getRed() + o), gr = jlimit (0, 255, (int) row[x].getGreen() + o), b = jlimit (0, 255, (int) row[x].getBlue() + o);
+                    const uint32 c = ditherPalettes[lutMode][lut[((r >> 3) << 10) | ((gr >> 3) << 5) | (b >> 3)]];
+                    row[x].setARGB (255, (uint8) (c >> 16), (uint8) (c >> 8), (uint8) c);
+                }
+            }
+        }
+        g.setImageResamplingQuality (Graphics::lowResamplingQuality);
+        g.drawImageTransformed (image, AffineTransform::scale (1.0f / s));
+    }
+    bool invalidateAll() override { return true; }
+    bool invalidate (const Rectangle<int>&) override { return true; }
+    void releaseResources() override { image = {}; }
+
+    // for every 15-bit colour, which of the sixteen is nearest
+    void buildLut (int m)
+    {
+        lutMode = m;
+        for (int i = 0; i < 32768; ++i)
+        {
+            const int r = ((i >> 10) & 31) * 8 + 4, g = ((i >> 5) & 31) * 8 + 4, b = (i & 31) * 8 + 4;
+            int best = 0, bestD = 1 << 30;
+            for (int k = 0; k < 16; ++k)
+            {
+                const uint32 c = ditherPalettes[m][k];
+                const int dr = r - (int) ((c >> 16) & 255), dg = g - (int) ((c >> 8) & 255), db = b - (int) (c & 255);
+                const int d = 3 * dr * dr + 4 * dg * dg + 2 * db * db;
+                if (d < bestD) { bestD = d; best = k; }
+            }
+            lut[i] = (uint8) best;
+        }
+    }
+
+    Component& comp;
+    std::function<int()> mode;
+    std::function<float()> scale;
+    Image image;
+    int offset[8][8] {};
+    uint8 lut[32768] {};
+    int lutMode = -1;
+};
+}
+
 CloudfinEditor::CloudfinEditor (CloudfinProcessor& p)
     : AudioProcessorEditor (&p), proc (p),
       freeze (p.apvts, ids::grFreeze, "freeze"),
@@ -983,6 +1110,7 @@ CloudfinEditor::CloudfinEditor (CloudfinProcessor& p)
 {
     setLookAndFeel (&lnf);
     addAndMakeVisible (content);
+    content.setCachedComponentImage (new DitherScreen (content, [this] { return lnf.theme().mode; }, [this] { return (float) getWidth() / (float) designW; }));
 
     panels.reserve (9);
     auto addPanel = [this] (const String& title, const String& sub, int stage)
@@ -1052,9 +1180,9 @@ CloudfinEditor::CloudfinEditor (CloudfinProcessor& p)
     waveH.assign (120, 0.0f);
     waveV.assign (120, 0.0f);
 
-    buildTube();
+    buildClouds();
     Random rnd (7);
-    for (int i = 0; i < 30; ++i)
+    for (int i = 0; i < 15; ++i)   // (each is drawn twice: once on each side of the centre line)
         ambient.push_back ({ rnd.nextFloat() * designW, 10.0f + rnd.nextFloat() * 26.0f, 5.0f + std::pow (rnd.nextFloat(), 2.0f) * 26.0f,
                              rnd.nextFloat() * 6.2832f, rnd.nextFloat() * 2000.0f });
 
@@ -1130,8 +1258,8 @@ HydroControl::HydroControl (CloudfinProcessor& p)
     setRepaintsOnMouseActivity (true);
 }
 
-Rectangle<float> HydroControl::capsule() const { return getLocalBounds().toFloat().withTrimmedRight (104.0f).reduced (1.0f, 3.0f); }
-Rectangle<float> HydroControl::pill() const    { return getLocalBounds().toFloat().removeFromRight (98.0f).reduced (1.0f, 4.0f); }
+Rectangle<float> HydroControl::capsule() const { return getLocalBounds().toFloat().withTrimmedRight (106.0f).reduced (1.0f, 3.0f); }
+Rectangle<float> HydroControl::pill() const    { return getLocalBounds().toFloat().removeFromRight (100.0f).reduced (1.0f, 4.0f); }
 
 void HydroControl::paint (Graphics& g)
 {
@@ -1172,7 +1300,7 @@ void HydroControl::paint (Graphics& g)
     g.drawRoundedRectangle (c, rad, 1.2f);
     g.setFont (AeroLookAndFeel::uiFont (12.0f, true));
     g.setColour (T.ink);
-    g.drawText ("hydrophone  " + String (roundToInt (level * 100.0f)) + " %", c, Justification::centred);
+    g.drawText ("hydrophone " + String (roundToInt (level * 100.0f)) + " %", c, Justification::centred);
 
     // where it goes
     const auto p = pill();
@@ -1324,48 +1452,69 @@ void CloudfinEditor::resized()
     content.setTransform (AffineTransform::scale (s));
 }
 
+// Everything is laid out about the vertical centre line (x = 750): three rows of
+// [side | centre | side], and each side panel has its mirror on the other side.
 void CloudfinEditor::layoutContent()
 {
-    constexpr int cellH = 136, pad = 14, top = 38;
+    const bool tight = look::tune().compact;
+    constexpr int pad = 14, cx = designW / 2;
+    const int cellH = tight ? 118 : 136, top = tight ? 34 : 38;
+    const int ph = tight ? 176 : 200, y1 = tight ? 106 : 112, y2 = y1 + ph + (tight ? 6 : 20), y3 = y2 + ph + (tight ? 6 : 20);
     auto placeRow = [&] (Panel* p, int x, int cellW = 84)
     {
         for (auto* k : p->knobs) { k->setBounds (x, p->r.getY() + top, cellW, cellH); x += cellW; }
     };
-
-    // header
-    gravityBtn.setBounds (24, 20, 120, 28);
-    hydroCtl.setBounds (150, 18, 370, 32);
-    presetBox.setBounds (designW - 24 - 132 - 16 - 250, 20, 250, 28);
-    themeSwitch.setBounds (designW - 24 - 132, 19, 132, 30);
+    auto placeCentred = [&] (Panel* p, int cellW = 84)
     {
-        const int stripW = (int) (fp::numStages * ChainStrip::chipW + (fp::numStages - 1) * ChainStrip::gap + 26.0f);
-        const int x = designW / 2 - stripW / 2 - 44;
-        chain.setBounds (x, 74, stripW, 28);
-        shuffleBtn.setBounds (chain.getRight() + 12, 75, 76, 26);
-        randomBtn.setBounds (shuffleBtn.getRight() + 8, 75, 92, 26);
+        placeRow (p, p->r.getCentreX() - (int) p->knobs.size() * cellW / 2, cellW);
+    };
+
+    // header: the light and the presets on the left, the hydrophone and gravity on the right
+    themeSwitch.setBounds (24, 19, 132, 30);
+    presetBox.setBounds (172, 20, 250, 28);
+    hydroCtl.setBounds (designW - 172 - 250, 18, 250, 32);
+    gravityBtn.setBounds (designW - 24 - 132, 20, 132, 28);
+    {
+        const int stripW = (int) (fp::numStages * ChainStrip::chipW + (fp::numStages - 1) * ChainStrip::gap + 2.0f * ChainStrip::endW);
+        chain.setBounds (cx - stripW / 2, 74, stripW, 28);
+        shuffleBtn.setBounds (chain.getX() - 12 - 92, 75, 92, 26);
+        randomBtn.setBounds (chain.getRight() + 12, 75, 92, 26);
     }
 
-    sgP->r = { 20, 112, 700, 200 };   placeRow (sgP, sgP->r.getX() + pad);
-    specFreeze.setBounds (sgP->r.getRight() - 150, sgP->r.getY() + 8, 136, 26);
-    psP->r = { 736, 112, 364, 200 };  placeRow (psP, psP->r.getX() + pad);
-    fmP->r = { 1116, 112, 364, 200 }; placeRow (fmP, fmP->r.getX() + pad);
+    // row 1: pitch | spectral smear | formant
+    psP->r = { 20, y1, 364, ph };   placeRow (psP, psP->r.getX() + pad);
     scaleBox.setBounds (psP->r.getX() + 114, psP->r.getY() + 9, psP->r.getWidth() - 114 - 16, 24);
+    sgP->r = { 400, y1, 700, ph };  placeCentred (sgP);
+    specFreeze.setBounds (sgP->r.getRight() - 150, sgP->r.getY() + 8, 136, 26);
+    fmP->r = { 1116, y1, 364, ph }; placeRow (fmP, fmP->r.getX() + pad);
 
-    grP->r = { 20, 332, 1080, 200 };  placeRow (grP, grP->r.getX() + pad, 80);
+    // row 2: feedback | grains | drift. The grain shape sits dead centre, the freeze bubble and
+    // the mix on either side of it, then four knobs each way.
+    fbP->r = { 20, y2, 190, ph };   placeCentred (fbP);
+    grP->r = { 226, y2, 1048, ph };
     {
-        const int x = grP->r.getX() + pad + 9 * 80 + 8;
-        shapeEditor.setBounds (x, grP->r.getY() + top - 2, 220, 150);
-        const int tx = shapeEditor.getRight() + 8;
-        freeze.setBounds (tx, grP->r.getY() + top, 96, 100);
-        randOct.setBounds (tx - 8, grP->r.getY() + top + 108, 112, 24);
+        constexpr int cell = 74, shapeW = 220, bigW = 96;
+        const int y = grP->r.getY() + top;
+        shapeEditor.setBounds (cx - shapeW / 2, y - 2, shapeW, tight ? 122 : 136);
+        const int fx = shapeEditor.getX() - 8 - bigW;                     // the freeze bubble, left of the shape
+        freeze.setBounds (fx, y, bigW, tight ? 88 : 100);
+        randOct.setBounds (fx - 14, y + (tight ? 92 : 108), 132, 24);
+        for (int i = 0; i < 4; ++i) grP->knobs[(size_t) i]->setBounds (fx - (4 - i) * cell, y, cell, cellH);
+        const int mx = shapeEditor.getRight() + 8;                        // the mix, mirroring it
+        grP->knobs[8]->setBounds (mx + (bigW - cell) / 2, y, cell, cellH);
+        for (int i = 0; i < 4; ++i) grP->knobs[(size_t) (4 + i)]->setBounds (mx + bigW + i * cell, y, cell, cellH);
     }
-    dlP->r = { 1116, 332, 364, 200 }; placeRow (dlP, dlP->r.getX() + pad);
+    drP->r = { 1290, y2, 190, ph }; placeCentred (drP);
 
-    rvP->r = { 20, 552, 280, 200 };   placeRow (rvP, rvP->r.getX() + pad);
-    cpP->r = { 316, 552, 656, 200 };  placeRow (cpP, cpP->r.getX() + pad);
-    meterArea = { cpP->r.getX() + pad + 7 * 84 + 12, cpP->r.getY() + top + 6, 22, 122 };
-    fbP->r = { 988, 552, 150, 200 };  placeRow (fbP, fbP->r.getX() + 33);
-    drP->r = { 1154, 552, 326, 200 }; placeRow (drP, drP->r.getX() + pad);
+    // row 3: ji delay | compander | reverb. The compander has a gain meter at each end.
+    dlP->r = { 20, y3, 364, ph };   placeRow (dlP, dlP->r.getX() + pad);
+    cpP->r = { 400, y3, 700, ph };  placeCentred (cpP);
+    {
+        const int half = (int) cpP->knobs.size() * 84 / 2, y = cpP->r.getY() + top + 6;
+        meterAreas[0] = { cx - half - 12 - 22, y, 22, tight ? 98 : 122 };
+        meterAreas[1] = { cx + half + 12, y, 22, tight ? 98 : 122 };
+    }
+    rvP->r = { 1116, y3, 364, ph }; placeCentred (rvP);
     backLayer = frontLayer = {};
 }
 
@@ -1417,37 +1566,45 @@ static void drawBokeh (Graphics& g, Point<float> c, float r, Colour col, float a
 }
 
 //==============================================================================
-// The waterslide: one tube that winds across the window, leaves, turns around off
-// screen and comes back, forever.
-void CloudfinEditor::buildTube()
+// The clouds: cumulus heaped up from overlapping puffs on a flat base. Each is given by how far
+// it sits from the centre line, and is drawn once on each side (the one on the line mirrors itself).
+void CloudfinEditor::buildClouds()
 {
-    tube.clear();
-    tube.startNewSubPath (-220, 150);
-    tube.cubicTo (250, -40, 600, 330, 900, 250);
-    tube.cubicTo (1200, 170, 1400, 40, 1700, 160);
-    tube.cubicTo (1950, 260, 1900, 520, 1550, 470);
-    tube.cubicTo (1200, 420, 1000, 700, 650, 620);
-    tube.cubicTo (350, 550, 200, 380, -150, 520);
-    tube.cubicTo (-420, 610, -320, 830, 100, 800);
-    tube.cubicTo (500, 775, 900, 860, 1720, 730);
-
-    farTube.clear();
-    farTube.startNewSubPath (-120, 400);
-    farTube.cubicTo (380, 300, 820, 500, 1620, 320);
-
-    PathStrokeType (tubeWidth, PathStrokeType::curved, PathStrokeType::rounded).createStrokedPath (tubeOutline, tube);
-
-    tubePts.clear(); tubeTan.clear();
-    const float len = tube.getLength();
-    for (float s = 0.0f; s <= len; s += tubeStep)
+    clouds.clear();
+    Random rnd (11);
+    auto make = [&] (float dx, float baseY, float w, float alpha)
     {
-        const auto a = tube.getPointAlongPath (s);
-        const auto b = tube.getPointAlongPath (jmin (len, s + 2.0f));
-        auto d = b - a;
-        const float m = jmax (1.0e-4f, d.getDistanceFromOrigin());
-        tubePts.push_back (a);
-        tubeTan.push_back (d / m);
-    }
+        Cloud c;
+        c.dx = dx; c.baseY = baseY; c.w = w; c.alpha = alpha;
+        const int n = 9 + rnd.nextInt (4);
+        for (int i = 0; i < n; ++i)
+        {
+            const float u = (float) i / (float) (n - 1) * 2.0f - 1.0f;      // along the base
+            const float hump = 1.0f - u * u;                                 // tallest in the middle
+            const float r = w * (0.09f + 0.15f * hump) * (0.8f + 0.4f * rnd.nextFloat());
+            c.puffs.push_back ({ u * w * 0.42f, -r * (0.5f + 0.5f * hump * rnd.nextFloat()), r });
+        }
+        for (int i = 0; i < 4; ++i)                                           // an upper storey
+        {
+            const float r = w * (0.11f + 0.07f * rnd.nextFloat());
+            c.puffs.push_back ({ (rnd.nextFloat() - 0.5f) * w * 0.45f, -w * (0.17f + 0.09f * rnd.nextFloat()), r });
+        }
+        if (dx == 0.0f)
+        {
+            const auto half = c.puffs;
+            for (auto& p : half) c.puffs.push_back ({ -p.x, p.y, p.r });
+        }
+        clouds.push_back (c);
+    };
+    // far ones along the horizon first, then the big near ones
+    make (120.0f, 524.0f, 170.0f, 0.55f);
+    make (365.0f, 516.0f, 230.0f, 0.62f);
+    make (640.0f, 522.0f, 280.0f, 0.66f);
+    make (0.0f,   330.0f, 330.0f, 0.92f);
+    make (650.0f, 150.0f, 300.0f, 0.90f);
+    make (300.0f, 196.0f, 250.0f, 0.95f);
+    make (505.0f, 400.0f, 430.0f, 1.0f);
+    make (175.0f, 452.0f, 210.0f, 0.95f);
 }
 
 void CloudfinEditor::renderStatic (float scale)
@@ -1477,15 +1634,16 @@ void CloudfinEditor::renderStatic (float scale)
     }
 }
 
-// Far away: sky, sun or moon, stars, and the waterslide. Drifts with the mouse.
+// Far away: sky, sun or moon, stars, clouds, and the sea under them. All of it is the same on
+// both sides of the centre line. Drifts with the mouse.
 void CloudfinEditor::drawBackScene (Graphics& g)
 {
     const Theme& T = lnf.theme();
-    constexpr float M = (float) parallaxMargin;
+    constexpr float M = (float) parallaxMargin, cx = designW * 0.5f, hz = horizonY;
     const auto full = Rectangle<float> (-M, -M, designW + 2 * M, designH + 2 * M);
 
     // sky
-    ColourGradient sky (T.skyTop, 0, full.getY(), T.skyLow, 0, full.getBottom(), false);
+    ColourGradient sky (T.skyTop, 0, full.getY(), T.skyLow, 0, hz + 40.0f, false);
     sky.addColour (T.mode == 0 ? 0.48 : 0.45, T.skyMid);
     if (T.mode != 0) sky.addColour (0.8, T.skyWarm);
     g.setGradientFill (sky);
@@ -1495,128 +1653,158 @@ void CloudfinEditor::drawBackScene (Graphics& g)
     Colour rayCol = Colours::white;
     if (T.mode == 0)
     {
-        sun = { 120, -80 };
-        g.setGradientFill (ColourGradient (Colours::white.withAlpha (0.9f), 170, -60, Colours::white.withAlpha (0.0f), 900, 300, true));
+        sun = { cx, 64 };
+        g.setGradientFill (ColourGradient (Colours::white.withAlpha (0.9f), sun.x, sun.y, Colours::white.withAlpha (0.0f), sun.x + 620, sun.y, true));
         g.fillRect (full);
+        g.setColour (Colours::white);
+        g.fillEllipse (Rectangle<float> (84, 84).withCentre (sun));
     }
     else if (T.dusk)
     {
-        sun = { 1230, 770 };
+        sun = { cx, hz - 14.0f };
         rayCol = T.warm;
-        g.setGradientFill (ColourGradient (Colour (0xffffe2b0).withAlpha (0.95f), sun.x, sun.y, Colour (0x00ffb070), sun.x + 700, sun.y, true));
+        g.setGradientFill (ColourGradient (Colour (0xffffe2b0).withAlpha (0.95f), sun.x, sun.y, Colour (0x00ffb070), sun.x + 640, sun.y, true));
         g.fillRect (full);
+        g.setGradientFill (ColourGradient (Colour (0xfffff4d8), sun.x, sun.y - 30, Colour (0xffffb070), sun.x, sun.y + 60, false));
+        g.fillEllipse (Rectangle<float> (120, 120).withCentre (sun));     // (the sea hides its lower half)
     }
     else
     {
         // stars, thinning toward the horizon
         Random rnd (42);
-        for (int i = 0; i < 260; ++i)
+        for (int i = 0; i < 130; ++i)
         {
-            const float x = full.getX() + rnd.nextFloat() * full.getWidth();
-            const float y = full.getY() + std::pow (rnd.nextFloat(), 1.4f) * (designH * 0.95f);
+            const float x = rnd.nextFloat() * (cx + M);
+            const float y = full.getY() + std::pow (rnd.nextFloat(), 1.4f) * (hz + M);
             const float sz = 0.5f + std::pow (rnd.nextFloat(), 3.0f) * 1.8f;
-            const float a = (0.25f + 0.75f * rnd.nextFloat()) * (1.0f - jlimit (0.0f, 0.85f, y / designH));
+            const float a = (0.25f + 0.75f * rnd.nextFloat()) * (1.0f - jlimit (0.0f, 0.85f, y / hz));
             g.setColour ((rnd.nextFloat() < 0.15f ? Colour (0xffcfe0ff) : Colours::white).withAlpha (a));
-            g.fillEllipse (x - sz, y - sz, 2 * sz, 2 * sz);
+            g.fillEllipse (cx - x - sz, y - sz, 2 * sz, 2 * sz);
+            g.fillEllipse (cx + x - sz, y - sz, 2 * sz, 2 * sz);
         }
-        // a glow on the horizon, like a city of water far away
-        g.setGradientFill (ColourGradient (Colour (0xff2b7fc0).withAlpha (0.35f), designW * 0.5f, designH + 60.0f,
-                                           Colour (0x002b7fc0), designW * 0.5f, designH * 0.45f, true));
-        g.fillRect (full);
-        // the moon
-        sun = { 1232, 64 };
+        // the moon, on the centre line
+        sun = { cx, 84 };
         rayCol = Colour (0xffcfe6ff);
         g.setGradientFill (ColourGradient (Colour (0xffcfe6ff).withAlpha (0.45f), sun.x, sun.y, Colour (0x00cfe6ff), sun.x + 230, sun.y, true));
         g.fillEllipse (Rectangle<float> (460, 460).withCentre (sun));
         auto mr = Rectangle<float> (60, 60).withCentre (sun);
-        g.setGradientFill (ColourGradient (Colours::white, mr.getX() + 14, mr.getY() + 12, Colour (0xffc9d8f2), mr.getRight(), mr.getBottom(), true));
+        g.setGradientFill (ColourGradient (Colours::white, sun.x, sun.y - 8, Colour (0xffc9d8f2), sun.x, mr.getBottom() + 10, true));
         g.fillEllipse (mr);
         g.setColour (Colour (0xff8ea3c9).withAlpha (0.25f)); // maria
-        g.fillEllipse (Rectangle<float> (16, 12).withCentre ({ sun.x - 8, sun.y - 6 }));
-        g.fillEllipse (Rectangle<float> (11, 9).withCentre ({ sun.x + 9, sun.y + 8 }));
-        g.fillEllipse (Rectangle<float> (7, 7).withCentre ({ sun.x + 12, sun.y - 12 }));
+        g.fillEllipse (Rectangle<float> (13, 10).withCentre ({ sun.x - 11, sun.y - 5 }));
+        g.fillEllipse (Rectangle<float> (13, 10).withCentre ({ sun.x + 11, sun.y - 5 }));
+        g.fillEllipse (Rectangle<float> (9, 8).withCentre ({ sun.x, sun.y + 12 }));
     }
 
-    // shafts of light
-    for (int i = 0; i < 7; ++i)
-    {
-        float a0, a1;
-        if (T.mode == 0)  { a0 = 0.18f + 0.19f * (float) i; a1 = a0 + 0.07f + 0.03f * (float) (i % 2); }
-        else if (T.dusk)  { a0 = 3.30f + 0.21f * (float) i; a1 = a0 + 0.05f + 0.035f * (float) (i % 3); }
-        else              { a0 = 1.75f + 0.16f * (float) i; a1 = a0 + 0.04f + 0.03f * (float) (i % 2); }
-        Path ray;
-        ray.startNewSubPath (sun);
-        ray.lineTo (sun.x + 2400 * std::cos (a0), sun.y + 2400 * std::sin (a0));
-        ray.lineTo (sun.x + 2400 * std::cos (a1), sun.y + 2400 * std::sin (a1));
-        ray.closeSubPath();
-        const float ra = T.mode == 0 ? 0.16f : (T.dusk ? 0.20f : 0.07f);
-        const Point<float> far = T.mode == 0 ? Point<float> (sun.x + 800, sun.y + 700)
-                               : T.dusk     ? Point<float> (sun.x - 1100, sun.y - 500) : Point<float> (sun.x - 500, sun.y + 900);
-        g.setGradientFill (ColourGradient (rayCol.withAlpha (ra), sun.x, sun.y, rayCol.withAlpha (0.0f), far.x, far.y, true));
-        g.fillPath (ray);
-    }
-
-    // tubes: plastic with cylinder shading, light glowing through (from inside, at night)
-    auto drawTube = [&] (const Path& p, float w, float a, float seamEvery)
-    {
-        auto stroke = [&] (float width) { return PathStrokeType (width, PathStrokeType::curved, PathStrokeType::rounded); };
-        if (T.dark)
-            for (int i = 3; i >= 1; --i)
-            {
-                g.setColour (T.tubeGlowA.withAlpha (0.05f * a));          // bloom
-                g.strokePath (p, stroke (w + (float) i * 26.0f));
-            }
-        for (int i = 3; i >= 1; --i)
+    // shafts of light, fanning out evenly on both sides (down from a high sun or the moon, up from a low one)
+    for (int i = 0; i < 4; ++i)
+        for (float side : { -1.0f, 1.0f })
         {
-            g.setColour ((T.dusk ? Colour (0xff3a3f7a) : (T.dark ? Colour (0xff000410) : Colour (0xff2a6f9e))).withAlpha ((T.dark ? 0.12f : 0.05f) * a));
-            g.strokePath (p, stroke (w + (float) i * 16.0f), AffineTransform::translation (0, w * 0.16f));
+            const float mid = (T.dusk ? -1.0f : 1.0f) * MathConstants<float>::halfPi;
+            const float off = (T.dusk ? 0.34f : 0.16f) + (T.dusk ? 0.30f : 0.24f) * (float) i;
+            const float wd = 0.05f + 0.03f * (float) (i % 2);
+            const float a0 = mid + side * off, a1 = mid + side * (off + wd);
+            Path ray;
+            ray.startNewSubPath (sun);
+            ray.lineTo (sun.x + 2400 * std::cos (a0), sun.y + 2400 * std::sin (a0));
+            ray.lineTo (sun.x + 2400 * std::cos (a1), sun.y + 2400 * std::sin (a1));
+            ray.closeSubPath();
+            const float ra = T.mode == 0 ? 0.16f : (T.dusk ? 0.20f : 0.07f);
+            g.setGradientFill (ColourGradient (rayCol.withAlpha (ra), sun.x, sun.y, rayCol.withAlpha (0.0f), sun.x + 1100, sun.y, true));
+            g.fillPath (ray);
         }
-        g.setColour (T.tubeRim.withAlpha (a));
-        g.strokePath (p, stroke (w + 3.0f));
-        const float widths[] = { 1.0f, 0.88f, 0.72f, 0.52f, 0.30f, 0.12f };
+
+    // one cloud: a shaded underside, then brighter and brighter layers heaped toward the light,
+    // gloss on the biggest puffs, and the light caught along its flat base
+    auto drawCloud = [&] (const Cloud& c, float side)
+    {
+        const Point<float> C (cx + side * c.dx, c.baseY);
+        auto light = sun - C;
+        light /= jmax (1.0e-4f, light.getDistanceFromOrigin());
+        Graphics::ScopedSaveState ss (g);
+        g.reduceClipRegion (Rectangle<float> (C.x - c.w, C.y - c.w, 2.0f * c.w, c.w + c.w * 0.035f).getSmallestIntegerContainer());
+        g.setColour (T.cloudShade);
+        for (auto& p : c.puffs)
+            g.fillEllipse (Rectangle<float> (2.1f * p.r, 2.1f * p.r).withCentre ({ C.x + side * p.x, C.y + p.y + p.r * 0.08f }));
+        const float widths[] = { 1.0f, 0.9f, 0.78f, 0.62f, 0.44f, 0.26f };
         for (int i = 0; i < 6; ++i)
         {
-            g.setColour (T.tube[i].withAlpha (a));
-            g.strokePath (p, stroke (w * widths[i]));
+            g.setColour (T.cloud[i]);
+            for (auto& p : c.puffs)
+            {
+                const float r = p.r * widths[i];
+                g.fillEllipse (Rectangle<float> (2 * r, 2 * r).withCentre (Point<float> (C.x + side * p.x, C.y + p.y) + light * (p.r - r) * 0.7f));
+            }
         }
-
-        Path outline;
-        stroke (w).createStrokedPath (outline, p);
-        Graphics::ScopedSaveState ss (g);
-        g.reduceClipRegion (outline);
-
-        // the light, coming through the lower wall
-        const float ga = T.dark ? 0.42f : 0.20f;
-        g.setColour (T.tubeGlowA.withAlpha (ga * a));
-        g.strokePath (p, stroke (w * 0.45f), AffineTransform::translation (0, w * 0.26f));
-        g.setColour (T.tubeGlowB.withAlpha (ga * 0.8f * a));
-        g.strokePath (p, stroke (w * 0.25f), AffineTransform::translation (0, w * 0.34f));
-
-        // depth: a shadowed belly and a glossy highlight running along the top
-        g.setColour (T.tubeRim.withAlpha (0.35f * a));
-        g.strokePath (p, stroke (w * 0.14f), AffineTransform::translation (0, w * 0.45f));
-        g.setColour (Colours::white.withAlpha ((T.dark ? 0.30f : 0.75f) * a));
-        g.strokePath (p, stroke (w * 0.06f), AffineTransform::translation (0, -w * 0.30f));
-        g.setColour (Colours::white.withAlpha ((T.dark ? 0.15f : 0.35f) * a));
-        g.strokePath (p, stroke (w * 0.16f), AffineTransform::translation (0, -w * 0.26f));
-
-        // flanges where the slide sections bolt together
-        const float len = p.getLength();
-        for (float s0 = seamEvery * 0.5f; s0 < len; s0 += seamEvery)
+        for (auto& p : c.puffs)
+            if (p.r > c.w * 0.17f)
+            {
+                const auto h = Point<float> (C.x + side * p.x, C.y + p.y) + light * p.r * 0.5f;
+                g.setGradientFill (ColourGradient (Colours::white.withAlpha (T.dark ? 0.30f : 0.75f), h.x, h.y, Colours::white.withAlpha (0.0f), h.x + p.r * 0.5f, h.y, true));
+                g.fillEllipse (Rectangle<float> (p.r, p.r).withCentre (h));
+            }
+        Path body;
+        for (auto& p : c.puffs) body.addEllipse (Rectangle<float> (2 * p.r, 2 * p.r).withCentre ({ C.x + side * p.x, C.y + p.y }));
+        g.reduceClipRegion (body);
+        const auto under = T.mode == 0 ? T.cloudShade.withAlpha (0.55f) : T.cloudGlowA.withAlpha (T.dark ? 0.30f : 0.55f);
+        g.setGradientFill (ColourGradient (under, C.x, C.y, under.withAlpha (0.0f), C.x, C.y - c.w * 0.16f, false));
+        g.fillRect (Rectangle<float> (C.x - c.w, C.y - c.w * 0.16f, 2.0f * c.w, c.w * 0.2f));
+    };
+    auto drawClouds = [&] (float alphaScale)
+    {
+        for (auto& c : clouds)
         {
-            const auto pt = p.getPointAlongPath (s0);
-            auto tn = p.getPointAlongPath (jmin (len, s0 + 2.0f)) - pt;
-            tn /= jmax (1.0e-4f, tn.getDistanceFromOrigin());
-            const Point<float> n (-tn.y, tn.x);
-            const float hw = w * 0.52f;
-            g.setColour (T.seam.withAlpha (0.9f * a));
-            g.drawLine ({ pt - n * hw, pt + n * hw }, 4.0f);
-            g.setColour (Colours::white.withAlpha ((T.dark ? 0.35f : 0.95f) * a));
-            g.drawLine ({ pt - n * hw + tn * 3.0f, pt + n * hw + tn * 3.0f }, 1.6f);
+            g.beginTransparencyLayer (c.alpha * alphaScale);
+            drawCloud (c, 1.0f);
+            if (c.dx != 0.0f) drawCloud (c, -1.0f);
+            g.endTransparencyLayer();
         }
     };
-    drawTube (farTube, 46.0f, 0.55f, 60.0f);
-    drawTube (tube, tubeWidth, 1.0f, 118.0f);
+    drawClouds (1.0f);
+
+    // the sea: calm, lighter at the horizon, with the clouds lying in it
+    const auto sea = full.withTop (hz);
+    const auto seaTop = T.mode == 0 ? T.aquaLight.interpolatedWith (T.skyLow, 0.35f)
+                      : T.dusk     ? T.skyLow.interpolatedWith (T.aqua, 0.30f)
+                                   : T.skyLow.interpolatedWith (T.ocean, 0.45f).darker (0.25f);
+    g.setGradientFill (ColourGradient (seaTop, 0, hz, T.dark ? T.ocean.darker (1.2f) : T.ocean, 0, full.getBottom(), false));
+    g.fillRect (sea);
+    {
+        Graphics::ScopedSaveState ss (g);
+        g.reduceClipRegion (sea.getSmallestIntegerContainer());
+        g.addTransform (AffineTransform::translation (0, -hz).scaled (1.0f, -0.55f).translated (0, hz));
+        drawClouds (T.dark ? 0.22f : 0.34f);
+    }
+    // haze on the horizon
+    const auto haze = (T.mode == 0 ? Colours::white : (T.dusk ? Colour (0xffffe2c0) : Colour (0xff8fc8ff))).withAlpha (T.dark ? 0.22f : 0.6f);
+    g.setGradientFill (ColourGradient (haze, 0, hz, haze.withAlpha (0.0f), 0, hz - 34.0f, false));
+    g.fillRect (full.getX(), hz - 34.0f, full.getWidth(), 34.0f);
+    g.setGradientFill (ColourGradient (haze, 0, hz, haze.withAlpha (0.0f), 0, hz + 26.0f, false));
+    g.fillRect (full.getX(), hz, full.getWidth(), 26.0f);
+
+    // the sun's (or the moon's) path down the middle of the water, and long quiet ripples either side
+    {
+        Random rnd (5);
+        const float depth = full.getBottom() - hz;
+        for (int i = 0; i < 70; ++i)
+        {
+            const float v = std::pow (rnd.nextFloat(), 1.3f);
+            const float y = hz + 3.0f + v * depth;
+            const float off = rnd.nextFloat() * (10.0f + v * 90.0f), w = 8.0f + v * 60.0f * rnd.nextFloat(), h = 1.4f + 3.0f * v;
+            g.setColour (rayCol.withAlpha ((0.25f + 0.55f * rnd.nextFloat()) * (T.dark ? 0.55f : 0.85f)));
+            g.fillEllipse (Rectangle<float> (w, h).withCentre ({ cx - off, y }));
+            g.fillEllipse (Rectangle<float> (w, h).withCentre ({ cx + off, y }));
+        }
+        for (int i = 0; i < 46; ++i)
+        {
+            const float v = std::pow (rnd.nextFloat(), 1.2f);
+            const float y = hz + 5.0f + v * depth;
+            const float off = 60.0f + rnd.nextFloat() * (cx + M), w = 40.0f + v * 190.0f, h = 1.2f + 2.6f * v;
+            g.setColour (Colours::white.withAlpha ((0.06f + 0.14f * rnd.nextFloat()) * (T.dark ? 0.5f : 1.0f)));
+            g.fillEllipse (Rectangle<float> (w, h).withCentre ({ cx - off, y }));
+            g.fillEllipse (Rectangle<float> (w, h).withCentre ({ cx + off, y }));
+        }
+    }
 }
 
 // Near: the wordmark and the glass panels. Fixed in place.
@@ -1658,39 +1846,31 @@ void CloudfinEditor::drawFrontScene (Graphics& g, bool panelsPart)
     for (auto& p : panels)
         drawPanelGlass (g, p);
 
-    // warm apertures: pools of late sunlight falling through gaps onto the glass
+    // warm apertures: pools of late sunlight falling through gaps in the clouds onto the glass (in mirrored pairs)
     if (T.dusk)
     {
-        const float spots[][3] = { { 260, 210, 190 }, { 980, 430, 170 }, { 600, 660, 210 }, { 1390, 240, 150 },
-                                   { 120, 560, 140 }, { 1240, 640, 220 }, { 760, 120, 130 } };
+        const float spots[][3] = { { 490, 210, 190 }, { 230, 430, 170 }, { 150, 660, 210 }, { 640, 240, 150 }, { 0, 640, 220 } };
         for (auto& sp : spots)
-        {
-            g.setGradientFill (ColourGradient (Colour (0xffffc98a).withAlpha (0.22f), sp[0], sp[1],
-                                               Colour (0x00ffb070), sp[0] + sp[2], sp[1], true));
-            g.fillEllipse (Rectangle<float> (2 * sp[2], 2 * sp[2]).withCentre ({ sp[0], sp[1] }));
-        }
+            for (float side : { -1.0f, 1.0f })
+            {
+                const float x = designW * 0.5f + side * sp[0];
+                g.setGradientFill (ColourGradient (Colour (0xffffc98a).withAlpha (sp[0] == 0 ? 0.11f : 0.22f), x, sp[1],
+                                                   Colour (0x00ffb070), x + sp[2], sp[1], true));
+                g.fillEllipse (Rectangle<float> (2 * sp[2], 2 * sp[2]).withCentre ({ x, sp[1] }));
+            }
     }
     // moonlight on the glass
     if (T.dark)
     {
-        const float spots[][3] = { { 1300, 200, 260 }, { 900, 400, 200 }, { 1400, 620, 180 } };
+        const float spots[][3] = { { 0, 200, 260 }, { 420, 400, 200 }, { 600, 620, 180 } };
         for (auto& sp : spots)
-        {
-            g.setGradientFill (ColourGradient (Colour (0xffbfe0ff).withAlpha (0.10f), sp[0], sp[1],
-                                               Colour (0x00bfe0ff), sp[0] + sp[2], sp[1], true));
-            g.fillEllipse (Rectangle<float> (2 * sp[2], 2 * sp[2]).withCentre ({ sp[0], sp[1] }));
-        }
-    }
-
-    // drift explanation
-    {
-        auto r = drP->r.withTrimmedLeft (14 + 2 * 84 + 4).withTrimmedRight (12).withTrimmedTop (42).withTrimmedBottom (12);
-        g.setFont (AeroLookAndFeel::uiFont (11.0f));
-        g.setColour (T.deep.withAlpha (0.8f));
-        g.drawFittedText ("each knob has its own random voltage. the bubble under it is its attenuverter: "
-                          "up (+) pushes the knob up, down (" + minusGlyph + ") pulls it down. "
-                          "the green line shows where it is now. double-click to reset.",
-                          r, Justification::topLeft, 12);
+            for (float side : { -1.0f, 1.0f })
+            {
+                const float x = designW * 0.5f + side * sp[0];
+                g.setGradientFill (ColourGradient (Colour (0xffbfe0ff).withAlpha (sp[0] == 0 ? 0.05f : 0.10f), x, sp[1],
+                                                   Colour (0x00bfe0ff), x + sp[2], sp[1], true));
+                g.fillEllipse (Rectangle<float> (2 * sp[2], 2 * sp[2]).withCentre ({ x, sp[1] }));
+            }
     }
 }
 
@@ -1761,54 +1941,58 @@ void CloudfinEditor::drawPanelGlass (Graphics& g, const Panel& p)
     g.setColour (T.panelEdge);
     g.strokePath (shape, PathStrokeType (1.2f));
 
+    // the title: on the left, or on the right for the panels right of the centre (their mirror image)
+    const bool right = mirrored (p);
     auto tr = p.r.reduced (18, 0).withHeight (34).translated (0, 4);
-    if (p.stage >= 0) tr = tr.withTrimmedLeft (28); // room for the order badge
+    if (p.stage >= 0) tr = right ? tr.withTrimmedRight (28) : tr.withTrimmedLeft (28); // room for the order badge
     g.setFont (AeroLookAndFeel::titleFont (19.0f));
     g.setColour (T.titleShadow);
-    g.drawText (p.title, tr.translated (0, 1), Justification::centredLeft);
+    g.drawText (p.title, tr.translated (0, 1), right ? Justification::centredRight : Justification::centredLeft);
     g.setColour (T.deep);
-    g.drawText (p.title, tr, Justification::centredLeft);
+    g.drawText (p.title, tr, right ? Justification::centredRight : Justification::centredLeft);
     g.setFont (AeroLookAndFeel::uiFont (11.0f, true));
-    g.setColour (T.mist);
-    g.drawText (p.sub, tr, Justification::centredRight);
+    g.setColour (look::text (T, T.mist));
+    g.drawText (p.sub, tr, right ? Justification::centredLeft : Justification::centredRight);
 }
 
-void CloudfinEditor::drawTubeLights (Graphics& g, float alpha)
+// What moves in the far layer: a slow glow passing through each cloud (the same on both sides),
+// and glints coming and going on the water.
+void CloudfinEditor::drawSkyLights (Graphics& g, float alpha)
 {
     const Theme& T = lnf.theme();
-    const int n = (int) tubePts.size();
-    if (n < 2) return;
-    if (T.dark) alpha *= 1.5f; // it glows at night
-    const float L = (float) n * tubeStep;
-    auto at = [&] (float s) { return jlimit (0, n - 1, (int) (frac (s / L) * (float) n)); };
+    constexpr float cx = designW * 0.5f, hz = horizonY;
+    if (T.dark) alpha *= 1.5f; // they glow at night
 
-    // soft light drifting along the slide
-    for (int k = 0; k < 9; ++k)
+    int k = 0;
+    for (auto& c : clouds)
     {
-        const auto p = tubePts[(size_t) at ((t * 0.032f + (float) k / 9.0f) * L)];
-        const float rr = tubeWidth * (0.85f + 0.15f * std::sin (t * 0.7f + (float) k));
-        const auto c = (k % 3 == 0) ? T.pulseB : T.pulseA;
-        g.setGradientFill (ColourGradient (c.withAlpha (jmin (1.0f, 0.42f * alpha)), p.x, p.y, c.withAlpha (0.0f), p.x + rr, p.y, true));
-        g.fillEllipse (Rectangle<float> (2 * rr, 2 * rr).withCentre (p));
+        const float breathe = 0.5f + 0.5f * std::sin (t * (0.21f + 0.04f * (float) (k % 4)) + (float) k * 1.9f);
+        const float sway = c.w * 0.22f * std::sin (t * 0.11f + (float) k);
+        const auto col = (k % 3 == 0) ? T.glintB : T.glintA;
+        const float rr = c.w * (0.34f + 0.08f * breathe);
+        for (float side : { -1.0f, 1.0f })
+        {
+            if (side < 0.0f && c.dx == 0.0f) break;
+            const Point<float> p (cx + side * (c.dx + sway), c.baseY - c.w * 0.14f);
+            g.setGradientFill (ColourGradient (col.withAlpha (jmin (1.0f, 0.30f * alpha * c.alpha * (0.35f + 0.65f * breathe))), p.x, p.y, col.withAlpha (0.0f), p.x + rr, p.y, true));
+            g.fillEllipse (Rectangle<float> (2 * rr, 2 * rr).withCentre (p));
+        }
+        ++k;
     }
 
-    // water rushing down it
-    for (int k = 0; k < 26; ++k)
+    const auto glint = T.mode == 0 ? Colours::white : T.glint;
+    for (int i = 0; i < 30; ++i)
     {
-        const float s0 = (t * 0.085f + (float) k / 26.0f) * L;
-        const float off = tubeWidth * 0.2f * std::sin ((float) k * 2.3f);
-        Path streak;
-        for (int j = 0; j <= 10; ++j)
-        {
-            const int i = at (s0 + (float) j * 5.0f);
-            const auto tn = tubeTan[(size_t) i];
-            const auto p = tubePts[(size_t) i] + Point<float> (-tn.y, tn.x) * off;
-            if (j == 0) streak.startNewSubPath (p); else streak.lineTo (p);
-        }
-        g.setColour ((T.dusk || T.dark ? T.glint : Colours::white).withAlpha (jmin (1.0f, 0.16f * alpha)));
-        g.strokePath (streak, PathStrokeType (7.0f, PathStrokeType::curved, PathStrokeType::rounded));
-        g.setColour ((T.dusk || T.dark ? T.glint : Colours::white).withAlpha (jmin (1.0f, 0.28f * alpha)));
-        g.strokePath (streak, PathStrokeType (3.5f, PathStrokeType::curved, PathStrokeType::rounded));
+        const float fi = (float) i;
+        const float v = std::pow (frac (fi * 0.618034f + 0.21f), 1.3f);
+        const float y = hz + 6.0f + v * ((float) designH - hz);
+        const float off = frac (fi * 0.414214f + 0.4f) * (i < 12 ? 30.0f + v * 110.0f : (float) designW * 0.5f);
+        const float tw = std::pow (jmax (0.0f, std::sin (t * (0.9f + 0.17f * (float) (i % 5)) + fi * 2.3f)), 3.0f);
+        if (tw < 0.03f) continue;
+        const float w = (10.0f + 34.0f * v) * (0.6f + 0.4f * tw), h = 1.6f + 2.4f * v;
+        g.setColour (glint.withAlpha (jmin (1.0f, 0.7f * tw * alpha)));
+        g.fillEllipse (Rectangle<float> (w, h).withCentre ({ cx - off, y }));
+        g.fillEllipse (Rectangle<float> (w, h).withCentre ({ cx + off, y }));
     }
 }
 
@@ -1817,25 +2001,26 @@ void CloudfinEditor::drawAmbient (Graphics& g)
     const Theme& T = lnf.theme();
     const float span = (float) designH + 90.0f;
     for (auto& b : ambient)
-    {
-        const float y = (float) designH + 45.0f - frac ((t * b.speed + b.offset) / span) * span;
-        const float x = b.x + 16.0f * std::sin (t * 0.4f + b.phase);
-        auto r = Rectangle<float> (b.size, b.size).withCentre ({ x, y });
-        const float a = jmap (b.size, 5.0f, 31.0f, 0.9f, 0.55f);
-        const auto rim = T.dusk ? T.warm : (T.dark ? T.aqua : T.aquaLight);
-        if (T.dark)
+        for (float side : { -1.0f, 1.0f })   // each bubble has a twin across the centre line
         {
-            g.setGradientFill (ColourGradient (T.aqua.withAlpha (0.25f * a), x, y, T.aqua.withAlpha (0.0f), x + b.size, y, true));
-            g.fillEllipse (r.expanded (b.size * 0.5f));
+            const float y = (float) designH + 45.0f - frac ((t * b.speed + b.offset) / span) * span;
+            const float x = designW * 0.5f + side * (b.x * 0.5f + 16.0f * std::sin (t * 0.4f + b.phase));
+            auto r = Rectangle<float> (b.size, b.size).withCentre ({ x, y });
+            const float a = jmap (b.size, 5.0f, 31.0f, 0.9f, 0.55f);
+            const auto rim = T.dusk ? T.warm : (T.dark ? T.aqua : T.aquaLight);
+            if (T.dark)
+            {
+                g.setGradientFill (ColourGradient (T.aqua.withAlpha (0.25f * a), x, y, T.aqua.withAlpha (0.0f), x + b.size, y, true));
+                g.fillEllipse (r.expanded (b.size * 0.5f));
+            }
+            g.setGradientFill (ColourGradient (Colours::white.withAlpha (0.05f * a), r.getCentreX(), r.getCentreY(),
+                                               rim.withAlpha (0.45f * a), r.getRight(), r.getCentreY(), true));
+            g.fillEllipse (r);
+            g.setColour (Colours::white.withAlpha ((T.dark ? 0.55f : 0.8f) * a));
+            g.drawEllipse (r, 0.9f);
+            g.setColour (Colours::white.withAlpha (0.85f * a));
+            g.fillEllipse (Rectangle<float> (b.size * 0.3f, b.size * 0.2f).withCentre ({ x, r.getY() + b.size * 0.24f }));
         }
-        g.setGradientFill (ColourGradient (Colours::white.withAlpha (0.05f * a), r.getCentreX(), r.getCentreY(),
-                                           rim.withAlpha (0.45f * a), r.getRight(), r.getCentreY(), true));
-        g.fillEllipse (r);
-        g.setColour (Colours::white.withAlpha ((T.dark ? 0.55f : 0.8f) * a));
-        g.drawEllipse (r, 0.9f);
-        g.setColour (Colours::white.withAlpha (0.85f * a));
-        g.fillEllipse (Rectangle<float> (b.size * 0.3f, b.size * 0.2f).withCentre ({ r.getX() + b.size * 0.34f, r.getY() + b.size * 0.28f }));
-    }
 }
 
 // Out-of-focus light. Background discs sit behind the glass and drift with the far
@@ -1849,11 +2034,11 @@ void CloudfinEditor::drawBokehLayer (Graphics& g, bool foreground)
     else if (T.dusk)  { cols[0] = Colour (0xffffd08a); cols[1] = Colour (0xffffb0a0); cols[2] = Colour (0xffd8c8ff); }
     else              { cols[0] = Colour (0xff5fe0ff); cols[1] = Colour (0xffa58cff); cols[2] = Colour (0xffe8f4ff); }
 
-    const int n = foreground ? 7 : 26;
+    const int n = foreground ? 4 : 13;   // (each drawn on both sides of the centre line)
     for (int i = 0; i < n; ++i)
     {
         const float fi = (float) i + (foreground ? 100.0f : 0.0f);
-        const float bx = frac (fi * 0.618034f + 0.13f) * (designW + 200.0f) - 100.0f;
+        const float bx = designW * 0.5f + frac (fi * 0.618034f + 0.13f) * (designW * 0.5f + 100.0f);
         const float by = frac (fi * 0.414214f + 0.57f) * (designH + 160.0f) - 80.0f;
         const float drift = foreground ? 14.0f : 9.0f;
         const Point<float> c (bx + drift * std::sin (t * (0.05f + 0.011f * (float) (i % 5)) + fi),
@@ -1864,12 +2049,13 @@ void CloudfinEditor::drawBokehLayer (Graphics& g, bool foreground)
             const float r = 55.0f + frac (fi * 0.7548f) * 95.0f;
             // under gravity the biggest ones fade away (the water's the thing to look at, and they're the costliest to draw)
             const float keep = r > 110.0f ? 1.0f - gravVis : 1.0f;
-            if (keep > 0.02f) drawBokeh (g, c, r, cols[i % 3], (T.dark ? 0.09f : 0.11f) * pulse * keep);
+            if (keep > 0.02f)
+                for (auto pt : { c, mirrorOf (c) }) drawBokeh (g, pt, r, cols[i % 3], (T.dark ? 0.09f : 0.11f) * pulse * keep);
         }
         else
         {
             const float r = 10.0f + std::pow (frac (fi * 0.7548f), 1.5f) * 42.0f;
-            drawBokeh (g, c, r, cols[i % 3], (T.mode == 0 ? 0.30f : (T.dusk ? 0.32f : 0.36f)) * pulse);
+            for (auto pt : { c, mirrorOf (c) }) drawBokeh (g, pt, r, cols[i % 3], (T.mode == 0 ? 0.30f : (T.dusk ? 0.32f : 0.36f)) * pulse);
         }
     }
 }
@@ -1879,10 +2065,11 @@ void CloudfinEditor::drawStars (Graphics& g)
 {
     const Theme& T = lnf.theme();
     if (T.mode == 0) return;
-    const int count = T.dark ? 24 : 14;
+    const int count = T.dark ? 12 : 7;   // (each has a twin across the centre line)
     for (int i = 0; i < count; ++i)
+      for (float side : { -1.0f, 1.0f })
     {
-        const float px = frac ((float) i * 0.618f + 0.11f) * designW;
+        const float px = designW * 0.5f + side * frac ((float) i * 0.618f + 0.11f) * designW * 0.5f;
         const float py = T.dark ? 8.0f + frac ((float) i * 0.381f + 0.27f) * (designH * 0.55f)
                                 : 110.0f + frac ((float) i * 0.381f + 0.27f) * (designH - 140.0f);
         const float tw = 0.5f + 0.5f * std::sin (t * (0.6f + 0.13f * (float) i) + (float) i * 1.7f);
@@ -1919,7 +2106,7 @@ void CloudfinEditor::drawDynamic (Graphics& g)
     auto info = [&] (Panel* p, const String& s)
     {
         g.setFont (AeroLookAndFeel::uiFont (11.5f, true));
-        g.setColour (T.deep.withAlpha (0.75f));
+        g.setColour (look::text (T, T.deep.withAlpha (0.75f)));
         g.drawText (s, p->r.reduced (14, 0).removeFromBottom (25), Justification::centred);
     };
 
@@ -1931,7 +2118,7 @@ void CloudfinEditor::drawDynamic (Graphics& g)
             if (p.stage < 0) continue;
             int pos = 0;
             for (int i = 0; i < fp::numStages; ++i) if (order[(size_t) i] == p.stage) pos = i;
-            auto b = Rectangle<float> (22.0f, 22.0f).withCentre ({ (float) p.r.getX() + 29.0f, (float) p.r.getY() + 21.0f });
+            auto b = Rectangle<float> (22.0f, 22.0f).withCentre ({ mirrored (p) ? (float) p.r.getRight() - 29.0f : (float) p.r.getX() + 29.0f, (float) p.r.getY() + 21.0f });
             const auto c = stageColour (p.stage);
             g.setColour (c.darker (0.6f));
             g.fillEllipse (b.translated (0, 2.0f));
@@ -1988,7 +2175,7 @@ void CloudfinEditor::drawDynamic (Graphics& g)
         info (dlP, "L  " + ms (0) + " / " + ms (2) + " / " + ms (4) + "     R  " + ms (1) + " / " + ms (3) + " / " + ms (5) + "  ms");
         auto tr2 = dlP->r.reduced (18, 0).withHeight (34).translated (0, 4).withTrimmedLeft (110);
         g.setFont (AeroLookAndFeel::uiFont (10.5f, true));
-        g.setColour (T.mist);
+        g.setColour (look::text (T, T.mist));
         g.drawText ("L " + String (tr.label[0]) + " " + tr.label[2] + " " + tr.label[4] + "   R " + tr.label[1] + " " + tr.label[3] + " " + tr.label[5],
                     tr2, Justification::centredRight);
     }
@@ -2000,12 +2187,14 @@ void CloudfinEditor::drawDynamic (Graphics& g)
     }
     info (cpP, String ("below: lift (") + minusGlyph + ") makes feedback bloom, sink (+) dries it out");
     info (fbP, String ("out ") + loopGlyph + " in");
+    info (drP, "a random voltage per knob");
 
-    // compander gain meter: a little vertical slide tube
+    // compander gain meters: a little glass column at each end of the row, both showing the same thing
+    for (auto& area : meterAreas)
     {
-        auto m = meterArea.toFloat();
+        auto m = area.toFloat();
         const float rad = m.getWidth() * 0.5f;
-        g.setGradientFill (ColourGradient (Colours::white.withAlpha (0.85f), m.getX(), 0, T.tube[0], m.getRight(), 0, false));
+        g.setGradientFill (ColourGradient (Colours::white.withAlpha (0.85f), m.getX(), 0, T.cloud[0], m.getRight(), 0, false));
         g.fillRoundedRectangle (m, rad);
         const float gdb = jlimit (-24.0f, 24.0f, proc.compGainDb.load());
         const float cy = m.getCentreY();
@@ -2016,7 +2205,7 @@ void CloudfinEditor::drawDynamic (Graphics& g)
         g.fillRoundedRectangle (bar, 3.0f);
         g.setColour (Colours::white);
         g.drawRoundedRectangle (m, rad, 1.2f);
-        g.setColour (T.deep.withAlpha (0.5f));
+        g.setColour (look::text (T, T.deep.withAlpha (0.5f)));
         g.fillRect (m.getX() + 2, cy - 0.5f, m.getWidth() - 4, 1.0f);
         g.setFont (AeroLookAndFeel::uiFont (9.5f, true));
         g.drawText (String (roundToInt (gdb)) + " dB", Rectangle<float> (m.getCentreX() - 22, m.getBottom() + 1, 44, 12), Justification::centred);
@@ -2032,7 +2221,7 @@ void CloudfinEditor::paintContent (Graphics& g)
     if (! backLayer.isValid() || ! frontLayer.isValid() || ! panelLayer.isValid() || std::abs (k - staticScale) > 0.05f)
         renderStatic (k);
 
-    // far: sky + slide (drifting with the mouse: parallax), stars, light in the tube, air bubbles.
+    // far: sky, clouds and sea (drifting with the mouse: parallax), stars, light in the clouds and on the water, air bubbles.
     // It's all soft and far away, so on a retina screen it's composed at 1x and scaled up: a quarter of the work.
     const auto far = parallax;
     auto drawFar = [&] (Graphics& fg)
@@ -2044,8 +2233,7 @@ void CloudfinEditor::paintContent (Graphics& g)
             fg.addTransform (AffineTransform::translation (far));
             drawStars (fg);
             drawBokehLayer (fg, false);
-            fg.reduceClipRegion (tubeOutline);
-            drawTubeLights (fg, 1.0f);
+            drawSkyLights (fg, 1.0f);
         }
         Graphics::ScopedSaveState ss (fg);   // middle: air bubbles, a bit nearer so they drift more
         fg.addTransform (AffineTransform::translation (far * 0.45f));
@@ -2275,7 +2463,7 @@ void CloudfinEditor::timerCallback()
     stepPhysics (dt);
 
     {
-        Point<float> target (5.0f * std::sin (t * 0.13f), 3.5f * std::sin (t * 0.17f + 1.0f));
+        Point<float> target (0.0f, 3.5f * std::sin (t * 0.17f + 1.0f));   // (at rest it only bobs up and down, so the picture stays centred)
         if (getScreenBounds().contains (Desktop::getMousePosition()))
         {
             const auto m = content.getMouseXYRelative().toFloat();
