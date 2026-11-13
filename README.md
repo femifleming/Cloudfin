@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/icon.png" width="160" alt="Cloudfin icon"></p>
 
-# Cloudfin
+# cloudfin
 
 A dreamy, floating multi-effect in a Frutiger Aero look, after a recurring dream of clouds heaped over calm water with light shining through them. The whole window is mirror symmetrical, and shown through a sixteen-colour dithered screen, like a mid-90s display.
 
@@ -12,7 +12,7 @@ Seven effects run one after another, in any order you like: drag the chips under
 
 ![Cloudfin](docs/screenshot.jpg)
 
-> **Spatial audio: [Leitner](https://github.com/femifleming/Leitner).** Leitner began here as Cloudfin's Ambisonics twin. Since 0.3 it is its own spatialization plug-in, after Bernhard Leitner and Iannis Xenakis, in its own repository: put it after Cloudfin to send Cloudfin's sound through the room.
+> **Spatial audio: [Leitner](https://github.com/femifleming/leitner).** Leitner began here as Cloudfin's Ambisonics twin. Since 0.3 it is its own spatialization plug-in, after Bernhard Leitner and Iannis Xenakis, in its own repository: put it after Cloudfin to send Cloudfin's sound through the room.
 
 **[How to use it: the full help page](docs/HELP.md)**
 
@@ -20,13 +20,13 @@ Seven effects run one after another, in any order you like: drag the chips under
 
 ## Download
 
-Get the latest version from the [Releases page](https://github.com/femifleming/Cloudfin/releases/latest):
+Get the latest version from the [Releases page](https://github.com/femifleming/cloudfin/releases/latest):
 
 | System | File |
 | --- | --- |
-| macOS 11 or later (Apple silicon and Intel) | [Cloudfin-macOS.zip](https://github.com/femifleming/Cloudfin/releases/latest/download/Cloudfin-macOS.zip) |
-| Windows 10 or later (64-bit) | [Cloudfin-Windows.zip](https://github.com/femifleming/Cloudfin/releases/latest/download/Cloudfin-Windows.zip) |
-| Linux (x86-64) | [Cloudfin-Linux.tar.gz](https://github.com/femifleming/Cloudfin/releases/latest/download/Cloudfin-Linux.tar.gz) |
+| macOS 11 or later (Apple silicon and Intel) | [Cloudfin-macOS.zip](https://github.com/femifleming/cloudfin/releases/latest/download/Cloudfin-macOS.zip) |
+| Windows 10 or later (64-bit) | [Cloudfin-Windows.zip](https://github.com/femifleming/cloudfin/releases/latest/download/Cloudfin-Windows.zip) |
+| Linux (x86-64) | [Cloudfin-Linux.tar.gz](https://github.com/femifleming/cloudfin/releases/latest/download/Cloudfin-Linux.tar.gz) |
 
 ## Install
 
@@ -74,7 +74,7 @@ This puts the app in `/Applications` and the Audio Unit and VST3 in `~/Library/A
 You need CMake 3.22 or later and a C++20 compiler (Xcode on macOS, Visual Studio 2022 on Windows, GCC or Clang on Linux).
 
 ```sh
-git clone --recursive https://github.com/femifleming/Cloudfin.git
+git clone --recursive https://github.com/femifleming/cloudfin.git
 cd Cloudfin
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release --target Cloudfin_All
