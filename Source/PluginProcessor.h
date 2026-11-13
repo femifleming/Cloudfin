@@ -83,7 +83,7 @@ public:
     static constexpr int kShapeN = fp::GrainShifter::kShapeN;
 
     CloudfinProcessor();
-    // (Leitner, the Ambisonics version, is this processor with different buses and a spatial stage after it)
+    // (another plug-in can build on this processor, with its own buses and editor: see CLOUDFIN_AS_BASE)
     explicit CloudfinProcessor (const BusesProperties&);
     ~CloudfinProcessor() override = default;
 

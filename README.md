@@ -12,7 +12,7 @@ Seven effects run one after another, in any order you like: drag the chips under
 
 ![Cloudfin](docs/screenshot.jpg)
 
-> **Spatial audio version: [Leitner](Leitner/README.md).** Cloudfin as an Ambisonics encoder (3rd to 7th order, ACN/SN3D, for the IEM and SPARTA decoders): the sound travels through the room as two lines, after Bernhard Leitner's sound spaces. It lives in the [`Leitner`](Leitner) folder of this repository.
+> **Spatial audio: [Leitner](https://github.com/femifleming/Leitner).** Leitner began here as Cloudfin's Ambisonics twin. Since 0.3 it is its own spatialization plug-in, after Bernhard Leitner and Iannis Xenakis, in its own repository: put it after Cloudfin to send Cloudfin's sound through the room.
 
 **[How to use it: the full help page](docs/HELP.md)**
 
@@ -118,3 +118,7 @@ Cloudfin's code was written with Claude Code (Anthropic), working under the dire
 ## License
 
 Released under the GNU Affero General Public License v3 (see [LICENSE](LICENSE)), as JUCE's free licence requires.
+
+## Request log
+
+Everything that was asked for while this was designed and built is in [REQUESTS.md](REQUESTS.md).

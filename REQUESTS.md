@@ -137,3 +137,9 @@ Every request typed while this was being designed and built with Claude Code, in
 
 > cleanup
 
+
+> for rhe leigtner plugin you helped me make, remove the multieffects, its more about the spatialization techniques, i dont need grnular and all that, those efffects are outisde the world of berhard leigner and iannis xenakis. just make it a spatialization plugin and keep all of those themes related to leigtner and xenakis.
+
+> then update, update manual and push
+
+> also make sure it has its own repo, and add the homebrew to the homebrew list repo
