@@ -33,9 +33,9 @@ Get the latest version from the [Releases page](https://github.com/femifleming/C
 ### macOS with Homebrew
 
 ```sh
-brew tap femifleming/cloudfin
-brew trust femifleming/cloudfin      # recent Homebrew asks you to trust a tap first
-brew install --cask cloudfin
+brew tap femifleming/tap
+brew trust --tap femifleming/tap      # recent Homebrew asks you to trust a tap first
+brew install --cask femifleming/tap/cloudfin
 ```
 
 If you installed it by hand before, add `--force` to the last line so Homebrew can replace those copies.
